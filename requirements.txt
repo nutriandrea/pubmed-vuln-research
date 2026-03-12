@@ -32,6 +32,12 @@ tenacity>=8.2.0
 # Logging & monitoring
 loguru>=0.7.0
 
+# Web interface
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+sse-starlette>=1.8.0
+python-multipart>=0.0.9
+
 # Testing
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
