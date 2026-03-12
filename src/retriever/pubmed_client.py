@@ -1,0 +1,301 @@
+"""
+Module 1 — PubMed Data Retrieval
+
+Uses Biopython's Entrez interface (same underlying API as LangChain's
+PubMedAPIWrapper) for fine-grained control over queries, metadata
+extraction, and PMC full-text retrieval.
+
+Public API
+----------
+PubMedClient.search(query_params) -> list[PaperMetadata]
+"""
+
+from __future__ import annotations
+
+import time
+import json
+from pathlib import Path
+from typing import Optional
+
+import xmltodict
+import requests
+from Bio import Entrez
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+from src.logger import logger
+from src.retriever.models import PaperMetadata
+
+# PubMed types accepted in --paper_type CLI flag
+PUBMED_TYPE_MAP: dict[str, str] = {
+    "review": "Review[Publication Type]",
+    "clinical_trial": "Clinical Trial[Publication Type]",
+    "meta_analysis": "Meta-Analysis[Publication Type]",
+    "systematic_review": "Systematic Review[Publication Type]",
+    "case_report": "Case Reports[Publication Type]",
+    "randomized_controlled_trial": "Randomized Controlled Trial[Publication Type]",
+}
+
+
+class PubMedQueryParams:
+    """Validated search parameters."""
+
+    def __init__(
+        self,
+        topic: str,
+        date_from: int = 2020,
+        date_to: int = 2025,
+        paper_type: Optional[str] = None,
+        max_results: int = 20,
+    ) -> None:
+        self.topic = topic
+        self.date_from = date_from
+        self.date_to = date_to
+        self.paper_type = paper_type
+        self.max_results = max_results
+
+    def build_query(self) -> str:
+        """Produce a valid PubMed query string."""
+        parts = [f"({self.topic}[Title/Abstract])"]
+        parts.append(f"{self.date_from}:{self.date_to}[pdat]")
+        if self.paper_type:
+            pt_filter = PUBMED_TYPE_MAP.get(
+                self.paper_type.lower().replace(" ", "_"), None
+            )
+            if pt_filter:
+                parts.append(pt_filter)
+            else:
+                logger.warning(
+                    "Unknown paper_type '{}'. Available: {}",
+                    self.paper_type,
+                    list(PUBMED_TYPE_MAP.keys()),
+                )
+        return " AND ".join(parts)
+
+
+class PubMedClient:
+    """
+    Retrieves papers from PubMed and optionally full text from PMC.
+
+    Parameters
+    ----------
+    email : str
+        Required by NCBI.
+    api_key : str | None
+        NCBI API key for higher rate limits (10 req/s vs 3 req/s).
+    cache_dir : Path | None
+        If set, raw XML responses are cached here to avoid repeated calls.
+    """
+
+    _EFETCH_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+    _PMC_BASE = "https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi"
+
+    def __init__(
+        self,
+        email: str,
+        api_key: Optional[str] = None,
+        cache_dir: Optional[Path] = None,
+    ) -> None:
+        Entrez.email = email
+        if api_key:
+            Entrez.api_key = api_key
+        self.cache_dir = cache_dir
+        if cache_dir:
+            cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # ------------------------------------------------------------------ #
+    # Public interface
+    # ------------------------------------------------------------------ #
+
+    def search(self, params: PubMedQueryParams) -> list[PaperMetadata]:
+        """
+        Run a PubMed search and return enriched PaperMetadata objects.
+        """
+        query = params.build_query()
+        logger.info("PubMed query: {}", query)
+
+        pmids = self._esearch(query, params.max_results)
+        logger.info("Found {} PMIDs", len(pmids))
+
+        papers: list[PaperMetadata] = []
+        for pmid in pmids:
+            paper = self._fetch_paper(pmid)
+            if paper:
+                papers.append(paper)
+            time.sleep(0.35)  # stay within NCBI rate limits
+
+        logger.info("Retrieved {} papers with metadata", len(papers))
+        return papers
+
+    # ------------------------------------------------------------------ #
+    # Private helpers
+    # ------------------------------------------------------------------ #
+
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
+    def _esearch(self, query: str, max_results: int) -> list[str]:
+        """Return list of PMIDs matching the query."""
+        handle = Entrez.esearch(
+            db="pubmed", term=query, retmax=max_results, usehistory="y"
+        )
+        record = Entrez.read(handle)
+        handle.close()
+        return record.get("IdList", [])
+
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
+    def _fetch_paper(self, pmid: str) -> Optional[PaperMetadata]:
+        """Fetch full metadata for a single PMID."""
+        cache_path = self.cache_dir / f"{pmid}.json" if self.cache_dir else None
+
+        if cache_path and cache_path.exists():
+            logger.debug("Cache hit for PMID {}", pmid)
+            with open(cache_path) as f:
+                data = json.load(f)
+            return PaperMetadata(**data)
+
+        try:
+            handle = Entrez.efetch(
+                db="pubmed", id=pmid, rettype="xml", retmode="xml"
+            )
+            raw = handle.read()
+            handle.close()
+        except Exception as exc:
+            logger.error("Failed to fetch PMID {}: {}", pmid, exc)
+            return None
+
+        paper = self._parse_pubmed_xml(pmid, raw)
+
+        # Try to enrich with PMC full text
+        if paper and paper.pmc_id:
+            paper.full_text = self._fetch_pmc_fulltext(paper.pmc_id)
+
+        if paper and cache_path:
+            with open(cache_path, "w") as f:
+                json.dump(paper.model_dump(), f, indent=2)
+
+        return paper
+
+    def _parse_pubmed_xml(self, pmid: str, xml_bytes: bytes) -> Optional[PaperMetadata]:
+        """Parse PubMed XML into PaperMetadata."""
+        try:
+            doc = xmltodict.parse(xml_bytes)
+        except Exception as exc:
+            logger.error("XML parse error for PMID {}: {}", pmid, exc)
+            return None
+
+        try:
+            article_set = doc.get("PubmedArticleSet", {})
+            pubmed_article = article_set.get("PubmedArticle", {})
+            # Handle list vs single article
+            if isinstance(pubmed_article, list):
+                pubmed_article = pubmed_article[0]
+
+            medline = pubmed_article.get("MedlineCitation", {})
+            article = medline.get("Article", {})
+
+            # Title
+            title_raw = article.get("ArticleTitle", "")
+            title = (
+                title_raw if isinstance(title_raw, str)
+                else title_raw.get("#text", str(title_raw))
+            )
+
+            # Abstract
+            abstract_obj = article.get("Abstract", {})
+            abstract_text = abstract_obj.get("AbstractText", "") if abstract_obj else ""
+            if isinstance(abstract_text, list):
+                abstract_text = " ".join(
+                    (t.get("#text", str(t)) if isinstance(t, dict) else str(t))
+                    for t in abstract_text
+                )
+            elif isinstance(abstract_text, dict):
+                abstract_text = abstract_text.get("#text", "")
+
+            # Authors
+            author_list = article.get("AuthorList", {}).get("Author", [])
+            if isinstance(author_list, dict):
+                author_list = [author_list]
+            authors = []
+            for a in author_list:
+                last = a.get("LastName", "")
+                first = a.get("ForeName", "")
+                if last:
+                    authors.append(f"{last} {first}".strip())
+
+            # Journal & year
+            journal_info = article.get("Journal", {})
+            journal_title = journal_info.get("Title", "")
+            pub_date = (
+                journal_info.get("JournalIssue", {})
+                .get("PubDate", {})
+            )
+            year = pub_date.get("Year", "") or pub_date.get("MedlineDate", "")[:4]
+
+            # Publication types
+            pt_list = article.get("PublicationTypeList", {}).get("PublicationType", [])
+            if isinstance(pt_list, (str, dict)):
+                pt_list = [pt_list]
+            pub_types = [
+                (p if isinstance(p, str) else p.get("#text", "")) for p in pt_list
+            ]
+
+            # PMC ID and DOI
+            article_id_list = (
+                pubmed_article.get("PubmedData", {})
+                .get("ArticleIdList", {})
+                .get("ArticleId", [])
+            )
+            if isinstance(article_id_list, dict):
+                article_id_list = [article_id_list]
+            pmc_id = None
+            doi = None
+            for aid in article_id_list:
+                id_type = aid.get("@IdType", "")
+                id_val = aid.get("#text", "")
+                if id_type == "pmc":
+                    pmc_id = id_val
+                elif id_type == "doi":
+                    doi = id_val
+
+            return PaperMetadata(
+                pmid=pmid,
+                title=title,
+                authors=authors,
+                journal=journal_title,
+                year=str(year),
+                abstract=abstract_text,
+                publication_types=pub_types,
+                pmc_id=pmc_id,
+                doi=doi,
+                pubmed_url=f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
+            )
+
+        except Exception as exc:
+            logger.error("Metadata parse error for PMID {}: {}", pmid, exc)
+            return None
+
+    def _fetch_pmc_fulltext(self, pmc_id: str) -> Optional[str]:
+        """
+        Attempt to retrieve full text from PubMed Central OA API.
+        Returns plain text or None if unavailable.
+        """
+        url = f"https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/{pmc_id}/unicode"
+        try:
+            resp = requests.get(url, timeout=15)
+            if resp.status_code != 200:
+                logger.debug("PMC full text not available for {}", pmc_id)
+                return None
+            data = resp.json()
+            # BioC JSON structure: documents[0].passages[].text
+            passages = []
+            for doc in data if isinstance(data, list) else [data]:
+                for passage in doc.get("documents", [{}])[0].get("passages", []):
+                    text = passage.get("text", "").strip()
+                    if text:
+                        passages.append(text)
+            full_text = "\n\n".join(passages)
+            logger.debug(
+                "PMC full text retrieved for {} ({} chars)", pmc_id, len(full_text)
+            )
+            return full_text or None
+        except Exception as exc:
+            logger.debug("PMC fetch error for {}: {}", pmc_id, exc)
+            return None
