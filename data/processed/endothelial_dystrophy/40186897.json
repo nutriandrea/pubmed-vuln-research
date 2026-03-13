@@ -1,0 +1,34 @@
+{
+  "pmid": "40186897",
+  "paper_title": "Genotyping methods for Fuchs corneal endothelial dystrophy.",
+  "year": "2025",
+  "authors": [
+    "Onitiu D",
+    "Harzallah I",
+    "Vaitinadapoule H",
+    "Mascarelli F",
+    "Touraine R",
+    "He Z",
+    "Dorado-Cortez O",
+    "Trone M C",
+    "Gain P",
+    "Thuret G"
+  ],
+  "journal": "Journal francais d'ophtalmologie",
+  "doi": "10.1016/j.jfo.2025.104509",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40186897/",
+  "raw_limitation_text": "Fuchs endothelial corneal dystrophy (FECD) is a genetic degenerative disease characterized by the progressive degradation of the corneal endothelium, often leading to vision loss. It is the leading cause of corneal transplantation in the Western world. FECD is more common in Europe and the United States, particularly among women. FECD manifests in two forms: an early-onset, rare form linked to mutations in the COL8A2 gene, and a late-onset, more common form associated with the expansion of the CTG18.1 triplet in the TCF4 gene. This expansion is present in about 70% of Caucasian patients with the late-onset form and can cause cellular dysfunctions. In this article, we present a review of the techniques used to genotype variants of genes associated with FECD. Six genotyping methods have been identified. Each method has advantages and disadvantages in terms of cost, throughput, sensitivity, and specificity: STR PCR, TP PCR, Southern Blot, Sanger Sequencing, short-read NGS, and long-read NGS. FECD presents complex genetic challenges. A combined approach using various genotyping techniques is necessary for a comprehensive characterization. Two strategies seem promising for diagnosis and research in this field: (1) the combination of STR PCR and TP PCR followed by short-read or long-read NGS; and (2) long-read NGS alone. These approaches allow for more precise characterization of genetic variants, thus facilitating a better understanding of the underlying mechanisms of FECD.",
+  "limitations": [
+    "The review does not provide empirical data to support the effectiveness of the proposed genotyping methods."
+  ],
+  "research_gaps": [
+    "There is a lack of studies exploring the long-term outcomes of patients diagnosed with FECD using these genotyping methods."
+  ],
+  "future_work": [
+    "Future research should focus on validating the proposed combined genotyping approaches in larger, diverse populations."
+  ],
+  "methodological_weaknesses": [
+    "The review does not address potential biases in the selection of studies included for analysis."
+  ],
+  "used_full_text": false
+}

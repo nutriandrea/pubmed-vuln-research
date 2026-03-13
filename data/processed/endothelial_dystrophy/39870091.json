@@ -1,0 +1,28 @@
+{
+  "pmid": "39870091",
+  "paper_title": "19-Year Follow-up on Patients with Axenfeld-Rieger Anomaly or Syndrome and Fuchs' Endothelial Dystrophy Including the 6th Generation in a Pedigree.",
+  "year": "2025",
+  "authors": [
+    "Schuknecht Angelika",
+    "Wachtl Josephine",
+    "Baumer Alessandra",
+    "Kniestedt Christoph"
+  ],
+  "journal": "Klinische Monatsblatter fur Augenheilkunde",
+  "doi": "10.1055/a-2498-0245",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/39870091/",
+  "raw_limitation_text": "Nineteen-year follow-up after initial examination on patients with Axenfeld-Rieger anomaly or syndrome (ARAS) and coexisting Fuchs' endothelial dystrophy (FED). All individuals had previously been tested positive for the PITX2 (g.20\u200a913\u2009G>T) mutation. Additionally, we addressed their descendants for phenotype and genotype examination to determine their penetrance into the next generations. Twenty-nine patients (9 patients and 20 of their descendants) participated in this prospective observational study. Nine patients were examined and tested positive for the PITX variant (g.20\u200a913\u2009G>T) in our previous study in 2001. Fourteen descendants were genetically and clinically examined. Six descendants were not available for clinical examination but donated saliva samples for genetic analysis. Ophthalmic examination was performed, consisting of visual acuity (VA) testing, applanation tonometry, gonioscopy, and anterior segment and central fundus biomicroscopy. Peripapillary optical coherence tomography (pOCT) was performed, and endothelial cell density (ECD) and central corneal thickness (CCT) were measured. Clinical disease progression in patients with a positive PITX2 mutation, genetic defect transmission, and clinical penetrance in subsequent third to sixth generations were the main outcome measures. Ten out of twenty descendants tested positive for the PITX2 variant (g.20\u200a913\u2009G>T). Eight were identified as being affected by ARAS. FED was found in six patients. All of them showed ARAS. Third generation patients (mean age 82) progressed significantly in both coexisting diseases. Four of six eyes ended up in corneal edema, with VA below 0.2. Glaucoma assessment was compromised due to corneal edema. Fourth generation patients (mean age 43) showed a mean CCT of 611\u2009\u00b5m, ECD of 1230, and intraocular pressure (IOP) of 17.5\u2009mmHg and thinning of the peripapillary nerve fiber layer. One eye was newly diagnosed with glaucoma, elevated IOP, and mild corneal edema. Fifth generation patients (mean age 27) presented with a mean CCT of 564\u2009\u00b5m, ECD of 2802, and IOP of 14.4\u2009mmHg. Genetic analysis confirmed the PITX2 (g.20\u200a913\u2009G>T) mutation was associated with Axenfeld-Rieger and FED in 10 of 20 descendants in this family. This matches the autosomal dominant inheritance pattern with a probability of 50%. Glaucoma and corneal decompensation were progressive over 19 years, with variable expression and early onset in subsequent pedigree members.",
+  "limitations": [
+    "Six descendants were not available for clinical examination but donated saliva samples for genetic analysis."
+  ],
+  "research_gaps": [
+    "The study does not address the long-term outcomes of patients beyond the sixth generation."
+  ],
+  "future_work": [
+    "Future research should focus on the clinical outcomes and genetic analysis of the remaining descendants who were not examined."
+  ],
+  "methodological_weaknesses": [
+    "Glaucoma assessment was compromised due to corneal edema."
+  ],
+  "used_full_text": false
+}

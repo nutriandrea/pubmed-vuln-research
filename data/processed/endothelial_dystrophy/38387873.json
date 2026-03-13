@@ -1,0 +1,31 @@
+{
+  "pmid": "38387873",
+  "paper_title": "Double trouble in DMEK surgery: Learning experience and review of the literature.",
+  "year": "2024",
+  "authors": [
+    "Romano Vito",
+    "Passaro Maria Laura",
+    "Airaldi Matteo",
+    "Ancona Chiara",
+    "Pagano Luca",
+    "Semeraro Francesco",
+    "Pineda Roberto"
+  ],
+  "journal": "European journal of ophthalmology",
+  "doi": "10.1177/11206721241228346",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/38387873/",
+  "raw_limitation_text": "To report a challenging Descemet Membrane Endothelial Keratoplasty (DMEK) case, complicated by intraoperative aqueous misdirection and spontaneous anterior chamber fibrin reaction. A 70-year-old female affected by corneal edema due to Fuchs endothelial dystrophy underwent a triple procedure (cataract extraction - IOL implantation - DMEK surgery) in her left eye. This report illustrates the management of the intraoperative complications of aqueous misdirection syndrome and anterior chamber fibrin reaction. Despite the optimal management of the posterior pressure and the thorough removal of the fibrinous reaction during the case, the DMEK graft was not completely unfolded and centred at the end of the surgical procedure. Nonetheless, the patient showed good long-term anatomical and functional recovery: at the last follow-up (2 years after surgery), central corneal thickness was 526\u2005\u00b5m with a best corrected visual acuity of 20/25 and an endothelial cell density of 1112 cell/mm. Early recognition and prompt management of intraoperative aqueous misdirection syndrome and anterior chamber fibrin reaction during DMEK surgery is essential to ensure good functional and anatomical outcomes.",
+  "limitations": [
+    "The DMEK graft was not completely unfolded and centred at the end of the surgical procedure."
+  ],
+  "research_gaps": [
+    "There is a lack of comprehensive studies addressing the management of intraoperative complications such as aqueous misdirection syndrome and anterior chamber fibrin reaction during DMEK surgery."
+  ],
+  "future_work": [
+    "Future research should focus on developing standardized protocols for the management of intraoperative complications in DMEK surgery."
+  ],
+  "methodological_weaknesses": [
+    "The study is based on a single case report, which limits the generalizability of the findings."
+  ],
+  "used_full_text": false
+}

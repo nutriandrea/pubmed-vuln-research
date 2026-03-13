@@ -1,0 +1,33 @@
+{
+  "pmid": "38044787",
+  "paper_title": "Pediatric Corneal Transplantation in Uyo, Nigeria: Early Experiences.",
+  "year": "2023",
+  "authors": [
+    "Nkanga E D",
+    "Umana Ui E",
+    "Ibanga A A",
+    "Nkanga E D",
+    "Ezeh E I",
+    "Ani E U",
+    "Nkanga D G",
+    "Etim B A",
+    "Akpan S I"
+  ],
+  "journal": "Nigerian journal of clinical practice",
+  "doi": "10.4103/njcp.njcp_459_23",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/38044787/",
+  "raw_limitation_text": "The burden of avoidable blindness from corneal disease is significantly higher where access to specialist eye care, the cost of treatment and the treatment infrastructure including eye banking, are beyond the reach of the impoverished masses. Corneal transplantation in children is challenging: it is more technically complex; patients often require multiple examinations under general anaesthesia to optimize treatment outcomes. There is also the increased risk of several complications including graft dehiscence, infection, rejection, and inappropriate patient or caregiver care. However, when successful, it restores vision. We present a report of our initial experience with penetrating keratoplasty in 2 children with blinding corneal disease in Uyo, Nigeria. Corneal transplantation history was retrieved and data (including data on age, sex, aetiology of corneal disease, indications for corneal transplantation, pre-operative and post-operative visual acuity and intraocular pressure measurements) was extracted for this report. Both patients had standard penetrating keratoplasty performed by one surgeon, under general anaesthesia. Case one was a 10-year-old male presenting with profound visual impairment from congenital hereditary endothelial dystrophy. His best corrected post-operative visual acuity was 6/24. Case two was a 3-year-old male with vision loss due to a corneal leucoma following treated herpes simplex keratitis. Post-operatively, his best corrected visual acuity improved to 6/12. Corneal graft tissue remained clear at more than 3 years of follow-up. Although amblyopia was a notable co-morbidity, corneal transplantation significantly improved their vision. Corneal banking services are advocated for in resource-limited settings where the magnitude of corneal blindness is greatest.",
+  "limitations": [
+    "The study is limited by the small sample size of only two patients, which may not provide a comprehensive understanding of the outcomes of pediatric corneal transplantation."
+  ],
+  "research_gaps": [
+    "There is a lack of extensive data on the long-term outcomes and complications associated with pediatric corneal transplantation in resource-limited settings."
+  ],
+  "future_work": [
+    "Future research should focus on establishing corneal banking services and evaluating their impact on the rates of corneal transplantation and outcomes in children."
+  ],
+  "methodological_weaknesses": [
+    "The study relies on retrospective data retrieval, which may introduce biases and limit the reliability of the findings."
+  ],
+  "used_full_text": false
+}

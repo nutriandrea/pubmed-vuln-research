@@ -1,0 +1,28 @@
+{
+  "pmid": "38950069",
+  "paper_title": "Outcomes of Descemet Stripping Only Without Postoperative Use of Topical Rho-Associated Protein Kinase Inhibitors.",
+  "year": "2024",
+  "authors": [
+    "Gustavson Britta P",
+    "Kahuam-L\u00f3pez Nicol\u00e1s",
+    "Yeung Sonia N",
+    "Iovieno Alfonso"
+  ],
+  "journal": "Cornea",
+  "doi": "10.1097/ICO.0000000000003619",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/38950069/",
+  "raw_limitation_text": "Descemet stripping only (DSO) is a promising surgical option for select patients with Fuchs endothelial dystrophy (FED). There is growing support for the use of topical Rho-associated protein kinase inhibitors (ROCKi) to optimize DSO outcomes. However, in many settings, ROCKi are either unavailable or not approved to treat corneal diseases. This study sought to characterize patient outcomes after DSO in the absence of ROCKi and potentially broaden the settings where DSO can be offered to patients. Single-center retrospective case series of 15 eyes/11 patients (66 years; 52-74) that underwent DSO, alone or combined with cataract surgery, by one surgeon between August 2020 and January 2023. Patients included in analyses had FED with central guttae, no clinical evidence of corneal edema, and a clinically healthy peripheral corneal endothelium. Mean follow-up time was 14 months (2-34). Fourteen of 15 eyes achieved corneal clearance (93.3%). Mean time to clearance was 8.5 weeks (3-23). Eleven eyes (73%) achieved corrected distance visual acuity of \u22640.2 with a significant postoperative improvement at 4 to 8 months ( P < 0.05) and sustained improvements at >12 months. No significant astigmatism was introduced by the procedure. Two eyes developed cystoid macular edema postoperatively. A trend toward earlier clearance was observed in the <65 years old group. Despite a longer time to corneal clearance in this cohort compared with the few studies using ROCKi, the overall success rate and visual outcomes for the patients in our cohort supports the use of DSO in settings where ROCKi are not readily available.",
+  "limitations": [
+    "This study is a single-center retrospective case series with a small sample size of 15 eyes/11 patients."
+  ],
+  "research_gaps": [
+    "The study does not compare outcomes of DSO with and without the use of ROCKi in a controlled manner."
+  ],
+  "future_work": [
+    "Future research should explore the long-term outcomes of DSO in larger, multicenter studies."
+  ],
+  "methodological_weaknesses": [
+    "The lack of a control group limits the ability to draw definitive conclusions about the effectiveness of DSO without ROCKi."
+  ],
+  "used_full_text": false
+}

@@ -1,0 +1,30 @@
+{
+  "pmid": "38503406",
+  "paper_title": "In vivo confocal microscopy findings after Descemet stripping only with and without topical ripasudil supplementation in Fuchs endothelial dystrophy.",
+  "year": "2024",
+  "authors": [
+    "Northey Luke C",
+    "Oliver Cameron",
+    "Trinh Tanya",
+    "Devasahayam Raj N",
+    "Burgos-Blasco Barbara",
+    "Moloney Gregory"
+  ],
+  "journal": "Canadian journal of ophthalmology. Journal canadien d'ophtalmologie",
+  "doi": "10.1016/j.jcjo.2024.02.016",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/38503406/",
+  "raw_limitation_text": "To report corneal epithelial and corneal endothelial cell (CEC) changes following Descemet stripping only (DSO) with and without topical ripasudil using in vivo confocal microscopy (IVCM). Prospective interventional case series of patients who underwent DSO for Fuchs endothelial dystrophy with or without postoperative topical ripasudil (4%, 6 times per day). Patients underwent IVCM (ConfoScan 3; NIDEK Technologies, Padova, Italy) at baseline, monthly until corneal clearance, and then every 6 months. En face images were obtained of the epithelium, anterior and posterior corneal stroma, and endothelium of the central and superior cornea. The epithelial and endothelial layer images were evaluated qualitatively. IVCM imaging was obtained from 34 patients, 26 (76%) of whom were supplemented with ripasudil and 8 (24%) of whom were not. Two eyes (6%) did not clear and required a keratoplasty. IVCM confirmed epithelial and endothelial cell morphology changes and reestablishment of a CEC mosaic. Hyperreflective nuclei, pleomorphism, multinucleated cells, and pseudoguttae were identified within the descemetorhexis. In patients on ripasudil, epithelial cells demonstrated transition from stratified squamous to spindle cell shape in regions of ripasudil-induced honeycomb edema. Migrating cells adopted an amoeboid shape and cytoplasm elongation when crossing to central stroma. Transient epithelial cell morphology changes and endothelial cell amoeboid shape changes appear to be uniquely associated with ripasudil. Rarely, figures were noted in both ripasudil-treated and non-ripasudil-treated corneas that resembled mitotic bodies. CECs display a range of adaptive mechanisms during healing to re-form the endothelial mosaic following DSO. Ripasudil administration appears to induce unique epithelial and endothelial cell changes.",
+  "limitations": [
+    "The study is limited by its small sample size of 34 patients, which may affect the generalizability of the findings."
+  ],
+  "research_gaps": [
+    "The long-term effects of ripasudil on corneal healing and cell morphology remain unclear and warrant further investigation."
+  ],
+  "future_work": [
+    "Future studies should explore the mechanisms underlying the unique changes induced by ripasudil in epithelial and endothelial cells."
+  ],
+  "methodological_weaknesses": [
+    "The qualitative evaluation of IVCM images may introduce subjectivity and variability in the assessment of cell morphology changes."
+  ],
+  "used_full_text": false
+}

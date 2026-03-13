@@ -153,11 +153,15 @@ class LimitationExtractor:
 
         base.raw_limitation_text = section_text
 
+        logger.debug("=== RAW TEXT FOR PMID {} ===\n{}", paper.pmid, section_text[:1000])
+
         if not section_text.strip():
             logger.warning("No text available for PMID {}", paper.pmid)
             return base
 
         structured = self._llm_extract(paper.title, section_text)
+
+        logger.debug("=== LLM EXTRACTED DATA FOR PMID {} ===\n{}", paper.pmid, json.dumps(structured, indent=2))
         base.limitations = structured.get("limitations", [])
         base.research_gaps = structured.get("research_gaps", [])
         base.future_work = structured.get("future_work", [])

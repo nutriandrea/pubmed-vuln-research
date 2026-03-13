@@ -1,0 +1,34 @@
+{
+  "pmid": "40867584",
+  "paper_title": "Clinical Applications of Corneal Cells Derived from Induced Pluripotent Stem Cells.",
+  "year": "2025",
+  "authors": [
+    "Luan Yixin",
+    "Musayeva Aytan",
+    "Kim Jina",
+    "Le Blon Debbie",
+    "van den Bogerd Bert",
+    "Dickman Mor M",
+    "LaPointe Vanessa L S",
+    "Ni Dhubhghaill Sorcha",
+    "Oellerich Silke"
+  ],
+  "journal": "Biomolecules",
+  "doi": "10.3390/biom15081139",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40867584/",
+  "raw_limitation_text": "[FUTURE_WORK]\nPreliminary clinical trials have demonstrated the feasibility of transplanting iPSC-derived corneal epithelial and endothelial cells with promising clinical outcomes. The findings of these studies show the clinical potential of iPSC-derived corneal cells as donor tissue substitutes. Despite these advances, important scientific and technical challenges remain for widespread translation into the clinic. For epithelial and endothelial cells, efforts should focus on improving manufacturing efficiency and validating long-term functional stability in vivo. In contrast, for corneal stromal cells the field is still in early development. This is because a true stromal replacement would require some bioengineering, since the cells are only a small fraction of the material needed. Certainly, 3D structures are needed and not monolayers as for the epithelium and endothelium. Current research focuses on differentiating iPSCs into keratocyte-like cells and reconstructing a transparent stromal matrix to restore corneal transparency.\n\n5. Conclusions\n\nInduced PSC-derived corneal cells offer a scalable and standardized cell source that has the potential to address global donor shortage. To realize the full clinical potential of iPSC-based corneal therapies, ongoing collaboration between researchers, clinicians, and regulators is necessary and will hopefully lead to a viable clinical alternative in the near future to alleviate the worldwide shortage of corneal donor tissue.\n\nDisclaimer/Publisher\u2019s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.\n\n[CONCLUSION]\nInduced PSC-derived corneal cells offer a scalable and standardized cell source that has the potential to address global donor shortage. To realize the full clinical potential of iPSC-based corneal therapies, ongoing collaboration between researchers, clinicians, and regulators is necessary and will hopefully lead to a viable clinical alternative in the near future to alleviate the worldwide shortage of corneal donor tissue.\n\nDisclaimer/Publisher\u2019s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.",
+  "limitations": [
+    "Important scientific and technical challenges remain for widespread translation into the clinic."
+  ],
+  "research_gaps": [
+    "For corneal stromal cells, the field is still in early development."
+  ],
+  "future_work": [
+    "Efforts should focus on improving manufacturing efficiency and validating long-term functional stability in vivo.",
+    "Current research focuses on differentiating iPSCs into keratocyte-like cells and reconstructing a transparent stromal matrix to restore corneal transparency."
+  ],
+  "methodological_weaknesses": [
+    "A true stromal replacement would require some bioengineering, since the cells are only a small fraction of the material needed."
+  ],
+  "used_full_text": true
+}

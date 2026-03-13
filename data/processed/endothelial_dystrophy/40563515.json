@@ -1,0 +1,30 @@
+{
+  "pmid": "40563515",
+  "paper_title": "Revisited: Isoforms, Expression, Functions, and Unresolved Questions.",
+  "year": "2025",
+  "authors": [
+    "Kovaleva Polina Alekseevna",
+    "Kotova Elena Sergeevna",
+    "Sharova Elena Ivanovna",
+    "Skorodumova Liubov Olegovna"
+  ],
+  "journal": "Biomolecules",
+  "doi": "10.3390/biom15060875",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40563515/",
+  "raw_limitation_text": "[CONCLUSION]\nThe SLC4A11 gene, which encodes a unique membrane transporter with tissue-specific expression, has emerged as a critical player in the physiology and pathology of the corneal endothelium and other tissues. Over the past two decades, research has vastly expanded our understanding of SLC4A11, revealing a complex landscape of transcript variants, protein isoforms, and diverse roles in cellular functions. A number of publications report ubiquitous expression of SLC4A11, while in other studies SLC4A11 transcription is not detected in some tissues. To date, the expression of three transcript variants of SLC4A11 (transcripts 1\u20133) and their corresponding protein isoforms has been characterized. Further research is required to elucidate the expression profile of SLC4A11, particularly in light of the identification of novel transcript variants and the cellular heterogeneity present within tissues. As a result of extensive study, researchers have reached limited consensus on SLC4A11\u2019s transport function. Current evidence identifies it as an NH3- and pH-regulated H+/OH\u2212 transporter. Additionally, SLC4A11 has been implicated in lactate transport, though the proposed mechanism remains unconfirmed. The exact relationship between MCT4 (a lactate transporter) and SLC4A11 also requires clarification. Emerging data also highlight SLC4A11\u2019s potential function as an adhesion molecule and its influence on cell fate determination pathways, both of which warrant further investigation. SLC4A11\u2019s involvement in pH regulation, lactate:H+ transport, glutaminolysis, and overexpression in certain cancers opens new avenues for exploring its function in glutamine-addicted cancers. Studies have suggested that SLC4A11 acts as a mitochondrial uncoupler, but recent findings contradict its localization to mitochondrial membranes. Instead, they emphasize the need to investigate its role in autophagy and mitophagy processes. While SLC4A11 pathogenic variants are firmly linked to CHED and Harboyan syndrome, its causal role in FECD lacks sufficient evidence. While much has been learned, the field is poised for further breakthroughs that will clarify the biological significance of SLC4A11 isoforms, resolve current controversies, and ultimately translate into therapies for patients affected by SLC4A11-related disorders.\n\nDisclaimer/Publisher\u2019s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.\n\nSupplementary Materials\n\nThe following supporting information can be downloaded at , Table S1: SLC4A11_Variants.",
+  "limitations": [
+    "Current evidence identifies SLC4A11 as an NH3- and pH-regulated H+/OH\u2212 transporter, but researchers have reached limited consensus on its transport function."
+  ],
+  "research_gaps": [
+    "The exact relationship between MCT4 and SLC4A11 requires clarification.",
+    "The proposed mechanism of SLC4A11's involvement in lactate transport remains unconfirmed.",
+    "SLC4A11's causal role in FECD lacks sufficient evidence."
+  ],
+  "future_work": [
+    "Further research is required to elucidate the expression profile of SLC4A11, particularly in light of the identification of novel transcript variants and the cellular heterogeneity present within tissues.",
+    "Emerging data highlight SLC4A11\u2019s potential function as an adhesion molecule and its influence on cell fate determination pathways, both of which warrant further investigation.",
+    "The need to investigate SLC4A11's role in autophagy and mitophagy processes is emphasized."
+  ],
+  "methodological_weaknesses": [],
+  "used_full_text": true
+}

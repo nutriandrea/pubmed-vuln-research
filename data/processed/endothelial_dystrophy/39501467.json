@@ -1,0 +1,32 @@
+{
+  "pmid": "39501467",
+  "paper_title": "Accuracy of intraocular lens power calculation in patients with endothelial dystrophy without edema.",
+  "year": "2025",
+  "authors": [
+    "Shemer Asaf",
+    "Fradkin Maayan",
+    "Dubinsky-Pertzov Biana",
+    "Reitblat Olga",
+    "Simaan Francis",
+    "Sella Ruti",
+    "Pras Eran",
+    "Einan-Lifshitz Adi"
+  ],
+  "journal": "Journal of cataract and refractive surgery",
+  "doi": "10.1097/j.jcrs.0000000000001578",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/39501467/",
+  "raw_limitation_text": "To evaluate the accuracy of several intraocular lens (IOL) formulas for patients with endothelial dystrophy (ED) without edema treated with cataract surgery alone. 1 academic, tertiary referral center. Comparative retrospective cohort study. The predicted refractive results of patients with ED who underwent cataract surgery were assessed and compared with a matched control group. The accuracy of 5 different IOL formulas, Haigis, Holladay 1, Barrett Universal II (BUII), SRK/T, and Kane, was evaluated and compared between the groups. The SDs of the prediction error (PE) of all formulas were compared. 221 eyes were included in this study. 50 (23%) eyes of patients with ED and 171 (77%) control eyes. There was no significant difference between the 2 groups in clinical and demographical characteristics ( P > .05). The postoperative spherical equivalent was -0.37 diopters (D) in the ED group and -0.30 D in the control group ( P = .8). Overall, both groups had a comparable SD of the PE and absolute PE in all formulas ( P > .05). In the ED group, absolute PE was 0.34 D for Haigis, 0.32 D for Holladay 1, 0.32 D for BUII, 0.38 D for SRK/T, and 0.32 D for Kane formulas. No statistically significant difference between formulas was found. The prediction accuracy of IOL power calculation in patients with ED was found comparable both between formulas and in comparison with healthy controls. This suggests that in patients with guttate without edema, the IOL power calculations are as effective and accurate as in healthy eyes.",
+  "limitations": [
+    "The study is limited by its retrospective design, which may introduce biases inherent to this type of study."
+  ],
+  "research_gaps": [
+    "There is a lack of understanding regarding the long-term outcomes of IOL power calculations specifically in patients with endothelial dystrophy."
+  ],
+  "future_work": [
+    "Future research should focus on prospective studies to validate the findings and explore the impact of different types of endothelial dystrophy on IOL power calculations."
+  ],
+  "methodological_weaknesses": [
+    "The sample size of 221 eyes may not be sufficient to draw definitive conclusions about the accuracy of IOL formulas in this specific patient population."
+  ],
+  "used_full_text": false
+}

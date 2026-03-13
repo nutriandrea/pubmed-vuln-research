@@ -1,0 +1,28 @@
+{
+  "pmid": "38639889",
+  "paper_title": "[Impact of the ratio between graft and host corneal size on immune rejection, re-bubbling rate and postoperative endothelial cell loss in 457 eyes after Descemet membrane endothelial keratoplasty (DMEK)].",
+  "year": "2024",
+  "authors": [
+    "Reinert Ursula",
+    "Seitz Berthold",
+    "Munteanu Cristian",
+    "Daas Loay"
+  ],
+  "journal": "Die Ophthalmologie",
+  "doi": "10.1007/s00347-024-02030-8",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/38639889/",
+  "raw_limitation_text": "The aim of this study was to assess the impact of the ratio between the graft and host corneal size (RGH) on postoperative complications, such as immune reactions, re-bubbling rate and endothelial cell loss (ECL) after Descemet membrane endothelial keratoplasty (DMEK). Retrospectively, 457 patient eyes were included which had undergone surgery between 2016 and 2019 in the Department of Ophthalmology, Saarland University Medical Center in Homburg/Saar using DMEK or triple DMEK, diagnosed as Fuchs' endothelial dystrophy (n\u202f=\u2009431), pseudophakic bullous keratopathy (n\u202f=\u20099) and others (n\u202f=\u200917). The follow-up period extended until the end of 2020.\u00a0Main outcome measures included immune reaction (IR), re-bubbling rate and the postoperative endothelial cell loss (ECL) at 6\u00a0weeks, 6\u00a0months and 12\u00a0months and whether these measures depended on the RGH. The RGH in this study ranged from 0.35 to 0.62 (0.46\u202f\u00b1\u20090.04). There were 33\u00a0(7.2%) postoperative IRs (DMEK n\u202f=\u200925; triple DMEK n\u202f=\u20098). The average RGH without IR (0.46\u202f\u00b1\u20090.04) was significantly (p\u202f=\u20090.038) smaller than in the group with IR (0.47\u202f\u00b1\u20090.05). Re-bubbling was necessary in 159 of 457 (34.8%) patient eyes. The RGH in patient eyes with re-bubbling (0.47\u202f\u00b1\u20090.04) was significantly (p\u202f=\u20090.014) higher than that in eyes without re-bubbling (0.45\u202f\u00b1\u20090.04). The mean preoperative endothelial cell count (ECD) was 2603\u202f\u00b1\u2009251 cells/mm (min: 2161, max: 3500 cells/mm). It was shown that a\u00a0larger RGH had no positive influence on endothelial cell loss (r\u202f=\u20090.001; p\u202f=\u20090.974). Our results suggest that a\u00a0larger graft diameter compared to host corneal size is associated with an increased rate of immune reactions and a\u00a0higher re-bubbling rate after DMEK. Otherwise, a\u00a0larger RGH had no positive influence on endothelial cell loss after DMEK. Accordingly, the graft size for DMEK should not be unnecessarily large, especially in eyes with Fuchs' endothelial dystrophy.",
+  "limitations": [
+    "The study is retrospective in nature, which may introduce biases related to the selection of patients and the data collection process."
+  ],
+  "research_gaps": [
+    "The study does not explore the long-term effects of RGH on postoperative outcomes beyond 12 months."
+  ],
+  "future_work": [
+    "Future research should investigate the optimal RGH for different patient populations and conditions to further refine surgical approaches."
+  ],
+  "methodological_weaknesses": [
+    "The follow-up period may not be sufficient to capture all potential complications related to RGH, as some issues may arise later than 12 months post-surgery."
+  ],
+  "used_full_text": false
+}

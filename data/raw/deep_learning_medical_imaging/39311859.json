@@ -1,0 +1,31 @@
+{
+  "pmid": "39311859",
+  "title": "Generative AI in orthopedics: an explainable deep few-shot image augmentation pipeline for plain knee radiographs and Kellgren-Lawrence grading.",
+  "authors": [
+    "Littlefield Nickolas",
+    "Amirian Soheyla",
+    "Biehl Jacob",
+    "Andrews Edward G",
+    "Kann Michael",
+    "Myers Nicole",
+    "Reid Leah",
+    "Yates Adolph J",
+    "McGrory Brian J",
+    "Parmanto Bambang",
+    "Seyler Thorsten M",
+    "Plate Johannes F",
+    "Rashidi Hooman H",
+    "Tafti Ahmad P"
+  ],
+  "journal": "Journal of the American Medical Informatics Association : JAMIA",
+  "year": "2024",
+  "abstract": "Recently, deep learning medical image analysis in orthopedics has become highly active. However, progress has been restricted by the absence of large-scale and standardized ground-truth images. To the best of our knowledge, this study is the first to propose an innovative solution, namely a deep few-shot image augmentation pipeline, that addresses this challenge by synthetically generating knee radiographs for training downstream tasks, with a specific focus on knee osteoarthritis Kellgren-Lawrence (KL) grading. This study leverages a deep few-shot image augmentation pipeline to generate synthetic knee radiographs. Despite the limited availability of training samples, we demonstrate the capability of our proposed computational strategy to produce high-fidelity plain knee radiographs and use them to successfully train a KL grade classifier. Our experimental results showcase the effectiveness of the proposed computational pipeline. The generated synthetic radiographs exhibit remarkable fidelity, evidenced by the achieved average Frechet Inception Distance (FID) score of 26.33 for KL grading and 22.538 for bilateral knee radiographs. For KL grading classification, the classifier achieved a test Cohen's Kappa and accuracy of 0.451 and 0.727, respectively. Our computational strategy also resulted in a publicly and freely available imaging dataset of 86\u00a0000 synthetic knee radiographs. Our approach demonstrates the capability to produce top-notch synthetic knee radiographs and use them for KL grading classification, even when working with a constrained training dataset. The results obtained emphasize the effectiveness of the pipeline in augmenting datasets for knee osteoarthritis research, opening doors for broader applications in orthopedics, medical image analysis, and AI-powered diagnosis.",
+  "publication_types": [
+    "Journal Article",
+    "Research Support, Non-U.S. Gov't"
+  ],
+  "full_text": null,
+  "pmc_id": "PMC11491597",
+  "doi": "10.1093/jamia/ocae246",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/39311859/"
+}

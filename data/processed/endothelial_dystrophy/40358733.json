@@ -1,0 +1,29 @@
+{
+  "pmid": "40358733",
+  "paper_title": "[Patient- and donor-dependent factors in descemet membrane endothelial keratoplasty and their impact on visual acuity and quality of life].",
+  "year": "2025",
+  "authors": [
+    "Hammer Thomas",
+    "Wieland P",
+    "Horn J",
+    "Viestenz A",
+    "Viestenz A"
+  ],
+  "journal": "Die Ophthalmologie",
+  "doi": "10.1007/s00347-025-02238-2",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40358733/",
+  "raw_limitation_text": "Descemet membrane endothelial keratoplasty (DMEK) is the gold standard for the treatment of endothelial corneal decompensation. The rapid postoperative improvement in visual acuity and the lower rejection rate of this minimally invasive procedure compared to penetrating keratoplasty justify the high acceptance of DMEK. The aim of this study was to analyse the general conditions for an optimal visual outcome after DMEK by recording patient- and graft-dependent factors. A total of 72\u00a0eyes were retrospectively analysed in which Fuchs' endothelial dystrophy was treated by DMEK at the University Eye Hospital in Halle in 2019 and 2020. The data at the following timepoints were collected: preoperative graft examination, examination prior to surgery and one examination within the first 6\u00a0months postoperatively and one in the second postoperative year. In particular, the best corrected visual acuity (BCVA) and endothelial cell density were compared. A\u00a0patient survey was used to evaluate the subjectively perceived success of the therapy. The main focus was on reduction in symptoms and the regained independence and participation in social life. The BCVA increased from 0.37\u202f\u00b1\u20090.15 (logMAR 0.43\u202f\u00b1\u20090.82) preoperatively to 0.65\u202f\u00b1\u20090.18 (logMAR 0.19\u202f\u00b1\u20090.74) in the second postoperative year. The endothelial cell density of the transplant decreased from 2503\u202f\u00b1\u2009206\u202fcells/mm preoperatively to 1441\u202f\u00b1\u2009516\u202fcells/mm in the second postoperative year and thus decreased on average by 42%. The corneal thickness decreased from 599\u202f\u00b1\u200958\u202f\u00b5m preoperatively to 521\u202f\u00b1\u200948\u202f\u00b5m in the second postoperative year and decreased on average by 78\u202f\u00b1\u200971\u202f\u00b5m. More than 70% of the patients surveyed complained of sensitivity to light (n\u202f=\u200966), blurred vision (n\u202f=\u200964) and reduced colour perception (n\u202f=\u200959). 57% (n\u202f=\u200950) reported symptoms of glare. 50% of patients (n\u202f=\u200950) felt that their vision was better at the time of the survey than preoperatively and 40% (n\u202f=\u200940) felt that it was optimal. Of those surveyed 84% (n\u202f=\u200984) described their quality of life postoperatively as better or even optimal. DMEK is an effective and safe procedure. The visual outcome can be influenced by various patient- and graft-dependent factors. Patients who had previously undergone other eye operations or had other eye diseases achieved a\u00a0lower average postoperative increase in visual acuity. In addition, a\u00a0correlation between donor gender and the decrease in endothelial cell density can be recognised. The endothelial cell loss in female donors is greater than in male donors.",
+  "limitations": [
+    "The study is limited by its retrospective design, which may introduce biases in data collection and analysis."
+  ],
+  "research_gaps": [
+    "The authors note that the correlation between donor gender and endothelial cell density loss requires further investigation to understand the underlying mechanisms."
+  ],
+  "future_work": [
+    "Future research should focus on prospective studies to validate the findings and explore additional patient- and donor-dependent factors affecting visual outcomes."
+  ],
+  "methodological_weaknesses": [
+    "The sample size of 72 eyes may not be sufficient to generalize the findings across a broader population."
+  ],
+  "used_full_text": false
+}

@@ -1,0 +1,29 @@
+{
+  "pmid": "38085175",
+  "paper_title": "Initial results of DMEK combined with cataract surgery and implantation of the light-adjustable lens.",
+  "year": "2024",
+  "authors": [
+    "Price David A",
+    "Dudasko Kathleen N",
+    "Hall Taylor A",
+    "Price Marianne O",
+    "Price Francis W"
+  ],
+  "journal": "Journal of cataract and refractive surgery",
+  "doi": "10.1097/j.jcrs.0000000000001372",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/38085175/",
+  "raw_limitation_text": "To evaluate the use of light-adjustable intraocular lenses (LALs) to maximize visual acuity (VA) postoperatively in eyes undergoing combined Descemet membrane endothelial keratoplasty (DMEK) and cataract surgery. Private practice, tertiary referral center. Retrospective review of initial case series. Patients with Fuchs endothelial dystrophy had DMEK combined with phacoemulsification and LAL implantation. Lenses were adjusted based on postoperative manifest refraction and locked-in 3 to 6 months postoperatively. Adjustments to the LAL were started after stabilization of refraction at sequential examinations. Outcomes were uncorrected near and distance VA and manifest refraction 3 to 6 months after locking the lens. A total of 27 eyes in 17 patients with mean age of 65 years (range 53 to 75 years) were included in this study. 6 eyes (22%) had either a near or intermediate target, and 21 eyes (78%) had a distance target. After lock-in, 57% of eyes with a distance target had uncorrected distance VA (UDVA) of 20/20 or better, 90% were 20/25 or better, and 100% were 20/40 or better. After lens lock-in, 100% of eyes had corrected distance VA (CDVA) of 20/20 or better, 86% had postoperative UDVA the same or better than preoperative CDVA, and 100% of eyes had UDVA within 1 line of the preoperative CDVA. In total, 93% of eyes were within 1 diopter (D) of spherical target, and 93% of eyes had \u22640.5 D of refractive cylinder postoperatively. Combining DMEK with LAL implantation provided significantly better UDVA and refractive outcomes than previously reported data on combined implantation of a standard monofocal lens.",
+  "limitations": [
+    "This study is a retrospective review of an initial case series, which may limit the generalizability of the findings."
+  ],
+  "research_gaps": [
+    "The authors did not explore the long-term outcomes beyond the 3 to 6 months postoperative period."
+  ],
+  "future_work": [
+    "Future studies should investigate the long-term stability of visual outcomes and the potential benefits of LALs in a larger, more diverse population."
+  ],
+  "methodological_weaknesses": [
+    "The small sample size of 27 eyes may not provide sufficient power to draw definitive conclusions about the effectiveness of the intervention."
+  ],
+  "used_full_text": false
+}

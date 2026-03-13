@@ -1,0 +1,31 @@
+{
+  "pmid": "40428730",
+  "paper_title": "Rho-Kinase Inhibitors in the Management of Fuchs Endothelial Corneal Dystrophy: A Review.",
+  "year": "2025",
+  "authors": [
+    "Juki\u0107 An\u0111ela",
+    "Pupi\u0107 Bakra\u010d Ana",
+    "\u0110apic Ivan\u010di\u0107 Biljana",
+    "Kopi\u0107 Andrijana",
+    "Meter Ana",
+    "Kasalica \u017du\u017eul Rajka",
+    "Pavan Josip",
+    "Juki\u0107 Tomislav"
+  ],
+  "journal": "Medicina (Kaunas, Lithuania)",
+  "doi": "10.3390/medicina61050772",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40428730/",
+  "raw_limitation_text": "[DISCUSSION]\nPersistent corneal edema resulting from endothelial cell loss or dysfunction is a common sequela in advanced FECD, especially after cataract surgery. The mainstay of treatment is endothelial keratoplasty, but ROCK inhibitors have recently emerged as a pharmacologic approach to promote corneal endothelial healing. Recent results suggest that ROCK inhibitors may facilitate functional repair of corneal endothelial cells in FECD without the need for surgical intervention. As mentioned before, ROCK inhibitors improve cell adhesion, migration, and proliferation, thereby encouraging remaining endothelial cells to cover defects and pump fluid. There is evidence that topical ROCK inhibitors can improve corneal endothelial function in FECD, probably by accelerating endothelial cell migration into guttae areas. Also, there is evidence that ROCK inhibitors suppress the secretion of abnormal ECM by cultured human CECs, which could mean that ROCK inhibitors can suppress the development of abnormal Descemet\u2019s membrane deposits (corneal guttae). Several topical ROCK inhibitors have been studied as a treatment for corneal edema in patients with FECD, with encouraging reports of improved corneal clarity in certain cases. Although topical ROCK inhibitors are primarily anti-glaucoma drugs, recent studies have shown their beneficial use for corneal endothelial diseases. There is a growing body of evidence supporting topical ROCK inhibitor efficacy in managing corneal edema, as a therapy or prophylactic measure in patients with low endothelial cell density undergoing cataract surgery. It appears that topical ROCK inhibitors can mitigate surgical trauma to the endothelium, which may help prevent mild edema from progressing to bullous keratopathy. In general, clinical data indicate that these drugs can improve corneal clarity in early to moderate FECD, and they appear most effective when there is a remaining reservoir of healthy endothelial cells in the peripheral cornea.\n\nThe safety profile of ROCK inhibitors is well documented from large glaucoma trials. The most common side effect is conjunctival hyperemia, which tends to diminish over time. ROCK inhibitors also cause cornea verticillata (vortex keratopathy), but this finding has not been associated with vision loss and typically does not require discontinuation. Serious ocular complications have not been observed, and systemic side effects are rare because systemic exposure is very low.\n\nA honeycomb pattern epithelial edema, described as a unique side effect of topical ROCK inhibitors, is relatively uncommon and is reversible. In one report, even without discontinuing the drug, the epitheliopathy self-resolved, suggesting it can be transient.\n\nThe literature over the past decade indicates that ROCK inhibitors can delay or even avoid the need for corneal transplantation in some cases by recovering endothelial function. However, their limitations must be acknowledged; in advanced FECD with very low endothelial cell counts, endothelial keratoplasty remains the definitive solution. Future clinical trials will further clarify the role of these drugs in the context of postoperative therapy (after DSO or cataract surgery) and as a non-surgical treatment modality for FECD.\n\nIn conclusion, topical ROCK inhibitors offer a promising and generally safe new treatment for managing FECD.\n\n5. Conclusions and Future Considerations\n\nFECD is a leading cause of corneal endothelial dysfunction and visual impairment, with no FDA-approved pharmacological treatments currently available to prevent its progression. As FECD often leads to the need for corneal transplantation, there is a pressing demand for effective alternative therapies to delay or prevent surgery. ROCK inhibitors have emerged as a promising pharmacological option for managing FECD, with a growing body of evidence supporting their efficacy, especially in patients undergoing cataract surgery.\n\nAdditionally, ROCK inhibitors have shown a favorable safety profile, with manageable side effects. Given these promising findings, ROCK inhibitors should be considered a valuable adjunct in the management of FECD, offering a non-surgical alternative that may delay the need for corneal transplantation in affected patients. Further studies are needed to explore the long-term efficacy, safety, and optimal dosing regimens of ROCK inhibitors in both postoperative and non-surgical settings.\n\nDisclaimer/Publisher\u2019s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.",
+  "limitations": [
+    "In advanced FECD with very low endothelial cell counts, endothelial keratoplasty remains the definitive solution."
+  ],
+  "research_gaps": [
+    "There is a pressing demand for effective alternative therapies to delay or prevent surgery."
+  ],
+  "future_work": [
+    "Future clinical trials will further clarify the role of these drugs in the context of postoperative therapy (after DSO or cataract surgery) and as a non-surgical treatment modality for FECD.",
+    "Further studies are needed to explore the long-term efficacy, safety, and optimal dosing regimens of ROCK inhibitors in both postoperative and non-surgical settings."
+  ],
+  "methodological_weaknesses": [],
+  "used_full_text": true
+}

@@ -1,0 +1,31 @@
+{
+  "pmid": "40801379",
+  "paper_title": "Quantitative Analysis of Endothelial Cell Damage in Corneal Grafts Used for Endothelial Keratoplasty and Correlation to Donor Tissue Characteristics and Postoperative Parameters.",
+  "year": "2025",
+  "authors": [
+    "Scherer Nicolas C D",
+    "Kassumeh Stefan",
+    "Dirisamer Martin",
+    "Luft Nikolaus",
+    "Priglinger Siegfried G",
+    "Mayer Wolfgang J"
+  ],
+  "journal": "Cornea",
+  "doi": "10.1097/ICO.0000000000003971",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40801379/",
+  "raw_limitation_text": "To provide quantitative analysis of endothelial cell damage in corneal grafts before preparation for Descemet membrane endothelial keratoplasty (DMEK) in patients with Fuchs endothelial dystrophy by studying thecorrelation between the amount of cell damage, donor tissue-associated aspects, and postoperative parameters, and by comparing postoperative parameters between patients with and without endothelial cell damage. Corneal graft preparation in DMEK or triple DMEK cases was recorded on video. Graft staining and preparation were performed by the surgeon immediately before transplantation using trypan blue and a no-touch liquid bubble dissection technique. Endothelial cell damage unmasked by staining before preparation was classified using a target grid with 8.25- and 4-mm zones. The amount of cell damage was quantified based on pixels. Endothelial cell damage was visible in 20 of 36 corneal grafts (55.6%). The mean percentage of cell damage in the complete endothelium was 2.53% (SD 1.67%). Nine cases (45%) showed cell damage inside the 8.25-mm zone and none inside the 4-mm zone. There was no significant correlation between the extent of endothelial cell damage and donor tissue preservation time or postoperative endothelial cell density (ECD). Patients with and without endothelial cell damage showed no significant differences in postoperative ECD or central pachymetry. Although over 50% of the grafts showed endothelial cell damage before preparation, the extent of cell damage was rather small. Although the 8.25-mm zone was affected in half of all cases, the presence and amount of cell damage did not seem to exert a negative influence on postoperative factors such as ECD and central pachymetry.",
+  "limitations": [
+    "The study did not find a significant correlation between the extent of endothelial cell damage and donor tissue preservation time or postoperative endothelial cell density (ECD).",
+    "Patients with and without endothelial cell damage showed no significant differences in postoperative ECD or central pachymetry."
+  ],
+  "research_gaps": [
+    "The presence and amount of cell damage did not seem to exert a negative influence on postoperative factors such as ECD and central pachymetry, indicating a need for further investigation into the implications of endothelial cell damage."
+  ],
+  "future_work": [
+    "Future research should explore the long-term effects of endothelial cell damage on graft survival and function beyond the immediate postoperative period."
+  ],
+  "methodological_weaknesses": [
+    "The quantification of endothelial cell damage was based on pixels, which may not fully capture the biological significance of the damage observed."
+  ],
+  "used_full_text": false
+}

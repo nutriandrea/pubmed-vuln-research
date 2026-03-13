@@ -1,0 +1,31 @@
+{
+  "pmid": "41822841",
+  "paper_title": "A Comprehensive Review of Artificial Intelligence (AI)-Driven Approaches to Meat Quality and Safety.",
+  "year": "2025",
+  "authors": [
+    "Hwang Young-Hwa",
+    "Samad Abdul",
+    "Muazzam Ayesha",
+    "Alam Amm Nurul",
+    "Joo Seon-Tea"
+  ],
+  "journal": "Food science of animal resources",
+  "doi": "10.5851/kosfa.2025.e32",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/41822841/",
+  "raw_limitation_text": "[CONCLUSION]\nThe use of AI for the assessment of meat quality has revolutionized research and industry environments. This review highlights various applications of AI technologies while focusing on the role of machine learning, predictive analytics, and computer vision in the improvement of food safety. Advanced imaging systems, real-time data analytics, and complex programming models have major advantages over traditional manual quality and sensory assessment. The biggest advantage of AI is its ability to maintain objectivity. The incorporation of AI models minimizes human error. It gives consistent and reliable results. Monitoring of parameters like color, texture, and detection of microbial load in real-time increases the accuracy of quality control systems. It also forecasts spoilage risks. The ability to make early predictive interventions is crucial because it supports both food safety and shelf life extension with waste reduction, thus benefiting the core standards needed in meat processing.\n\nThe review shows that both traditional assessment methods and AI approaches exist. However, traditional methods should continue being used with the involvement of AI because they represent decades of quality assessment foundations, yet modern supply chain requirements exceed these traditional methods\u2019 speed and ability to adapt. AI excels at fast data processing of large datasets, thus maintaining control over meat products to meet industry and consumer requirements. These technologies will achieve success when multiple obstacles are solved. Data quality problems, infrastructure expenses, workforce change challenges, and ethical concerns need immediate solutions and attention. AI in meat quality assessment will fail to reach its maximum potential unless the existing barriers are successfully addressed. Multiple industries expect to achieve additional revolutionary potential by combining innovative technology elements such as IoT sensors, blockchain systems for tracking purposes, and AI robotic enhancements. New market developments will enhance manufacturing operations and supply complete quality profile data, guaranteeing transparency for consumer meat product safety assessment.\n\nFurthermore, this review also presents future recommendations that may help to predict the future of the meat industry. Standardized high-quality datasets need to be created immediately to use AI-based technologies in the meat industry. The meat industry should develop educational programs and collaborative networks to create ongoing employee learning opportunities, which will help employees in learning AI-related knowledge. All industries must work together to build effective regulatory guidelines that define data protection protocols, moral standards, and responsible AI uses in food safety systems.",
+  "limitations": [
+    "AI in meat quality assessment will fail to reach its maximum potential unless the existing barriers are successfully addressed."
+  ],
+  "research_gaps": [
+    "Data quality problems, infrastructure expenses, workforce change challenges, and ethical concerns need immediate solutions and attention."
+  ],
+  "future_work": [
+    "Standardized high-quality datasets need to be created immediately to use AI-based technologies in the meat industry.",
+    "The meat industry should develop educational programs and collaborative networks to create ongoing employee learning opportunities.",
+    "All industries must work together to build effective regulatory guidelines that define data protection protocols, moral standards, and responsible AI uses in food safety systems."
+  ],
+  "methodological_weaknesses": [
+    "Traditional methods should continue being used with the involvement of AI because they represent decades of quality assessment foundations, yet modern supply chain requirements exceed these traditional methods\u2019 speed and ability to adapt."
+  ],
+  "used_full_text": true
+}

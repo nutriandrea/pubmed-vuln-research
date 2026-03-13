@@ -1,0 +1,29 @@
+{
+  "pmid": "40256029",
+  "paper_title": "Assessment of tomographic parameters and detection of subclinical edema in Fuchs' endothelial corneal dystrophy pre-cataract surgery.",
+  "year": "2025",
+  "authors": [
+    "Alves-Ambr\u00f3sio Jo\u00e3o",
+    "Miranda V\u00edtor",
+    "Aguiar Catarina Pestana",
+    "Chibante-Pedro Jo\u00e3o",
+    "Almeida In\u00eas"
+  ],
+  "journal": "International journal of ophthalmology",
+  "doi": "10.18240/ijo.2025.04.04",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40256029/",
+  "raw_limitation_text": "To assess tomographic changes and subclinical edema detection in Fuchs' endothelial corneal dystrophy (FECD) through Scheimpflug tomography in a group of phakic patients contemplating cataract surgery. A retrospective study was conducted on 30 phakic eyes from patients diagnosed with FECD but without clinical edema, and 59 phakic eyes from a control group without corneal alterations. Comprehensive ophthalmic examinations were conducted, including slit-lamp biomicroscopy, corneal specular microscopy (CSM), and Scheimpflug tomography. The study encompassed 30 phakic eyes with FECD (mean age 59.8\u00b113.1y) and 59 control eyes (mean age 61.3\u00b17.7y). The best-corrected visual acuity was higher in the control group compared to the FECD group [0 (0, 0.08)  0.05 (0, 0.15) logMAR; =0.042]. CSM revealed significant differences between the FECD and control groups in several parameters: number of analyzed cells (26\u00b113  135\u00b142, <0.001), cell density (2049\u00b1376  2479\u00b1225 cells/mm, <0.001), mean cell area [463 (434, 544)  397 (383, 431) \u00b5m; <0.001], coefficient of variation (54.8%\u00b118.7%  41.0%\u00b17.2%, <0.001), and hexagonal cells [0 (0, 47%)  47% (40%, 53%), <0.001]. Although often used as a clinical parameter for detecting edema, central corneal thickness measured by CSM showed no significant difference between the FECD and control groups (530\u00b157  546\u00b130 \u00b5m, =0.179). Significant differences were noted in various Pentacam measurements between the groups. Specifically, parameters like loss of parallel isopachs (13  0 eyes, <0.001), displacement of the thinnest point (11  0 eyes, <0.001), posterior focal depression (25  7 eyes, <0.001), and increased light scatter [21.4 (17.6; 23.9)  18.0 (16.8, 21.8), =0.01] were significantly more prevalent in FECD eyes, reflecting the presence of subclinical edema and loss of corneal transparency. Scheimpflug tomography allows for an objective assessment of FECD, offering the capability to detect subclinical edema at an early stage, monitor disease progression, and serve as a predictor of corneal decompensation following cataract surgery.",
+  "limitations": [
+    "The study was conducted on a relatively small sample size of 30 phakic eyes with FECD, which may limit the generalizability of the findings."
+  ],
+  "research_gaps": [
+    "The authors did not explore the long-term outcomes of cataract surgery in patients with FECD, which remains an important area for further investigation."
+  ],
+  "future_work": [
+    "Future research should focus on larger, multicenter studies to validate the findings and assess the long-term implications of subclinical edema in FECD patients undergoing cataract surgery."
+  ],
+  "methodological_weaknesses": [
+    "The retrospective nature of the study may introduce selection bias and limit the ability to establish causality between the observed tomographic changes and clinical outcomes."
+  ],
+  "used_full_text": false
+}

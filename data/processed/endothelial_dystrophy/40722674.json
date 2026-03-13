@@ -1,0 +1,31 @@
+{
+  "pmid": "40722674",
+  "paper_title": "Therapeutic Potential of Rho Kinase Inhibitors in Corneal Disease: A Systematic Review of Preclinical and Clinical Studies.",
+  "year": "2025",
+  "authors": [
+    "Ghenciu Laura Andreea",
+    "Andrei Diana",
+    "Borza Claudia",
+    "Iacob Roxana",
+    "Stoicescu Emil Robert",
+    "Bolintineanu Sorin Lucian",
+    "Iacob Daniela",
+    "Ha\u0163egan Ovidiu Alin"
+  ],
+  "journal": "Biomedicines",
+  "doi": "10.3390/biomedicines13071602",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/40722674/",
+  "raw_limitation_text": "[LIMITATIONS]\nSeveral limitations temper the strength of our conclusions. Most clinical studies enrolled small cohorts, often in single centers, limiting generalizability. There was also a substantial heterogeneity in interventions, dosages, and outcome measures, which precluded quantitative meta-analysis. Follow-up durations were often short, leaving long-term safety and durability of effect uncertain. Finally, preclinical models also varied widely and the translational relevance of some endpoints to clinical outcomes remains to be fully validated.\n\n6. Conclusions\n\nRho kinase inhibition accelerates corneal endothelial repair through multiple complementary pathways. In preclinical models, ROCK inhibitors induce cell-cycle re-entry, dismantle stress fibers, and activate Rac1/Arp2/3-driven lamellipodia to boost migration, and restore a hexagonal, barrier- and pump-competent monolayer. Topical Ripasudil or Netarsudil have been shown to increase endothelial cell density, reduce central corneal thickness, and improve best-corrected visual acuity by \u22652 Snellen lines with minimal side effects. Additional multicenter, randomized studies are required to optimize dose regimens, assess long-term safety, and develop standardized efficacy outcomes.\n\nDisclaimer/Publisher\u2019s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.\n\nSupplementary Materials\n\nThe following supporting information can be downloaded at , Table S1: PRISMA Checklist (Source: ref.). Table S2. Search strategy and query results for ROCK inhibitors in corneal disease research. Table S3. Inclusion and exclusion criteria.\n\n[CONCLUSION]\nRho kinase inhibition accelerates corneal endothelial repair through multiple complementary pathways. In preclinical models, ROCK inhibitors induce cell-cycle re-entry, dismantle stress fibers, and activate Rac1/Arp2/3-driven lamellipodia to boost migration, and restore a hexagonal, barrier- and pump-competent monolayer. Topical Ripasudil or Netarsudil have been shown to increase endothelial cell density, reduce central corneal thickness, and improve best-corrected visual acuity by \u22652 Snellen lines with minimal side effects. Additional multicenter, randomized studies are required to optimize dose regimens, assess long-term safety, and develop standardized efficacy outcomes.\n\nDisclaimer/Publisher\u2019s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.\n\nSupplementary Materials\n\nThe following supporting information can be downloaded at , Table S1: PRISMA Checklist (Source: ref.). Table S2. Search strategy and query results for ROCK inhibitors in corneal disease research. Table S3. Inclusion and exclusion criteria.",
+  "limitations": [
+    "Most clinical studies enrolled small cohorts, often in single centers, limiting generalizability.",
+    "There was also a substantial heterogeneity in interventions, dosages, and outcome measures, which precluded quantitative meta-analysis.",
+    "Follow-up durations were often short, leaving long-term safety and durability of effect uncertain.",
+    "Preclinical models also varied widely and the translational relevance of some endpoints to clinical outcomes remains to be fully validated."
+  ],
+  "research_gaps": [],
+  "future_work": [
+    "Additional multicenter, randomized studies are required to optimize dose regimens, assess long-term safety, and develop standardized efficacy outcomes."
+  ],
+  "methodological_weaknesses": [],
+  "used_full_text": true
+}

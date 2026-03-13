@@ -1,0 +1,26 @@
+{
+  "pmid": "39643274",
+  "paper_title": "Rare finding of bilateral Urrets-Zavalia syndrome post Descemet's stripping endothelial keratoplasty in congenital hereditary endothelial dystrophy in a child.",
+  "year": "2024",
+  "authors": [
+    "Misra Sikha",
+    "Arora Anchal"
+  ],
+  "journal": "BMJ case reports",
+  "doi": "10.1136/bcr-2024-262450",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/39643274/",
+  "raw_limitation_text": "A female patient in her middle childhood who was initially referred to us with congenital glaucoma was later diagnosed with congenital hereditary endothelial dystrophy. Due to progressive corneal thickening and haze, Descemet's stripping endothelial keratoplasty (DSEK) was performed consecutively in both her eyes. Postoperative follow-ups included evaluations of corneal thickness, intraocular pressure and disc assessment. On post DSEK, the corneal thickness reduced on subsequent follow-ups and the intraocular pressure was normal. The corneal clarity improved significantly, however, examination revealed a fixed, dilated pupil with posterior synechiae, suggestive of Urrets-Zavalia syndrome. Urrets-Zavalia syndrome should be suspected in cases with a fixed, dilated pupil post-keratoplasty.",
+  "limitations": [
+    "The study is limited by the fact that it is a single case report, which may not be generalizable to a larger population."
+  ],
+  "research_gaps": [
+    "There is a lack of comprehensive studies on the long-term outcomes of DSEK in patients with congenital hereditary endothelial dystrophy."
+  ],
+  "future_work": [
+    "Future research should focus on understanding the mechanisms leading to Urrets-Zavalia syndrome post-keratoplasty."
+  ],
+  "methodological_weaknesses": [
+    "The follow-up evaluations were limited to corneal thickness, intraocular pressure, and disc assessment, potentially overlooking other important postoperative complications."
+  ],
+  "used_full_text": false
+}
