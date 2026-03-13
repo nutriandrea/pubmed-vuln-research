@@ -12,6 +12,7 @@ PubMedClient.search(query_params) -> list[PaperMetadata]
 
 from __future__ import annotations
 
+import threading
 import time
 import json
 from pathlib import Path
@@ -24,6 +25,12 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from src.logger import logger
 from src.retriever.models import PaperMetadata
+
+# Bio.Entrez uses module-level globals (email, api_key) which are NOT
+# thread-safe.  This lock serialises all writes to those globals AND all
+# Entrez network calls so concurrent ingestion sessions don't corrupt
+# each other's state.
+_ENTREZ_LOCK = threading.Lock()
 
 # PubMed types accepted in --paper_type CLI flag
 PUBMED_TYPE_MAP: dict[str, str] = {
@@ -54,9 +61,13 @@ class PubMedQueryParams:
         self.max_results = max_results
 
     def build_query(self) -> str:
-        """Produce a valid PubMed query string."""
+        """
+        Build the PubMed term string.
+        Date range is intentionally NOT embedded here — it is passed as
+        separate mindate/maxdate/datetype parameters to Entrez.esearch()
+        to avoid encoding issues that can trigger HTTP 400 errors.
+        """
         parts = [f"({self.topic}[Title/Abstract])"]
-        parts.append(f"{self.date_from}:{self.date_to}[pdat]")
         if self.paper_type:
             pt_filter = PUBMED_TYPE_MAP.get(
                 self.paper_type.lower().replace(" ", "_"), None
@@ -95,12 +106,16 @@ class PubMedClient:
         api_key: Optional[str] = None,
         cache_dir: Optional[Path] = None,
     ) -> None:
-        Entrez.email = email
-        if api_key:
-            Entrez.api_key = api_key
+        self._email   = email
+        self._api_key = api_key
         self.cache_dir = cache_dir
         if cache_dir:
             cache_dir.mkdir(parents=True, exist_ok=True)
+        # Set module globals once under the lock
+        with _ENTREZ_LOCK:
+            Entrez.email = email
+            if api_key:
+                Entrez.api_key = api_key
 
     # ------------------------------------------------------------------ #
     # Public interface
@@ -111,9 +126,12 @@ class PubMedClient:
         Run a PubMed search and return enriched PaperMetadata objects.
         """
         query = params.build_query()
-        logger.info("PubMed query: {}", query)
+        logger.info(
+            "PubMed query: {}  [date {}-{}]",
+            query, params.date_from, params.date_to,
+        )
 
-        pmids = self._esearch(query, params.max_results)
+        pmids = self._esearch(params)
         logger.info("Found {} PMIDs", len(pmids))
 
         papers: list[PaperMetadata] = []
@@ -131,13 +149,36 @@ class PubMedClient:
     # ------------------------------------------------------------------ #
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
-    def _esearch(self, query: str, max_results: int) -> list[str]:
-        """Return list of PMIDs matching the query."""
-        handle = Entrez.esearch(
-            db="pubmed", term=query, retmax=max_results, usehistory="y"
-        )
-        record = Entrez.read(handle)
-        handle.close()
+    def _esearch(self, params: PubMedQueryParams) -> list[str]:
+        """
+        Return list of PMIDs matching the query.
+
+        Date range is passed as Entrez mindate/maxdate/datetype parameters
+        rather than embedded in the term string.  This avoids HTTP 400
+        errors caused by range syntax encoding when usehistory is active,
+        and is the form recommended by NCBI documentation.
+
+        usehistory is omitted — we retrieve IDs directly (IdList) which
+        is simpler and avoids the WebEnv/query_key state that can cause
+        400s when module globals are mutated by concurrent threads.
+        """
+        query = params.build_query()
+        with _ENTREZ_LOCK:
+            # Re-assert globals inside the lock in case another thread
+            # changed them between our __init__ and this call.
+            Entrez.email = self._email
+            if self._api_key:
+                Entrez.api_key = self._api_key
+            handle = Entrez.esearch(
+                db="pubmed",
+                term=query,
+                retmax=params.max_results,
+                mindate=str(params.date_from),
+                maxdate=str(params.date_to),
+                datetype="pdat",
+            )
+            record = Entrez.read(handle)
+            handle.close()
         return record.get("IdList", [])
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
@@ -152,11 +193,15 @@ class PubMedClient:
             return PaperMetadata(**data)
 
         try:
-            handle = Entrez.efetch(
-                db="pubmed", id=pmid, rettype="xml", retmode="xml"
-            )
-            raw = handle.read()
-            handle.close()
+            with _ENTREZ_LOCK:
+                Entrez.email = self._email
+                if self._api_key:
+                    Entrez.api_key = self._api_key
+                handle = Entrez.efetch(
+                    db="pubmed", id=pmid, rettype="xml", retmode="xml"
+                )
+                raw = handle.read()
+                handle.close()
         except Exception as exc:
             logger.error("Failed to fetch PMID {}: {}", pmid, exc)
             return None

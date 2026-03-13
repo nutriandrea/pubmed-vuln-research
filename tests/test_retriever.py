@@ -19,7 +19,8 @@ class TestPubMedQueryParams:
         p = PubMedQueryParams(topic="breast cancer", date_from=2020, date_to=2025)
         q = p.build_query()
         assert "breast cancer" in q
-        assert "2020:2025[pdat]" in q
+        # Date range is now passed as Entrez params, NOT embedded in the query string
+        assert "2020" not in q or "[pdat]" not in q
 
     def test_paper_type_review(self):
         p = PubMedQueryParams(
@@ -98,5 +99,12 @@ class TestPubMedClientParsing:
     def test_esearch_returns_pmids(self, mock_read, mock_esearch):
         mock_esearch.return_value = MagicMock()
         mock_read.return_value = {"IdList": ["11111111", "22222222"]}
-        pmids = self.client._esearch("breast cancer", 5)
+        params = PubMedQueryParams(topic="breast cancer", date_from=2020, date_to=2025, max_results=5)
+        pmids = self.client._esearch(params)
         assert pmids == ["11111111", "22222222"]
+        # Verify date is passed as Entrez params, not in the term string
+        call_kwargs = mock_esearch.call_args.kwargs
+        assert call_kwargs.get("mindate") == "2020"
+        assert call_kwargs.get("maxdate") == "2025"
+        assert call_kwargs.get("datetype") == "pdat"
+        assert "2020" not in call_kwargs.get("term", "")
