@@ -458,7 +458,9 @@
                     <button class="btn btn-secondary" onclick="downloadReport()" style="width: auto;" disabled id="downloadBtn">
                         📥 Markdown
                     </button>
-                    <!-- PDF generation disabled for this deployment -->
+                    <button class="btn btn-primary" onclick="downloadPDF()" style="width: auto;" disabled id="downloadPdfBtn">
+                        📄 PDF
+                    </button>
                 </div>
             </div>
         </div>
@@ -611,12 +613,14 @@
             const reportBtn = document.getElementById('reportBtn');
             const clearBtn = document.getElementById('clearBtn');
             const downloadBtn = document.getElementById('downloadBtn');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
             
             if (questionInput) questionInput.disabled = false;
             if (askBtn) askBtn.disabled = false;
             if (reportBtn) reportBtn.disabled = false;
             if (clearBtn) clearBtn.disabled = false;
             if (downloadBtn) downloadBtn.disabled = false;
+            if (downloadPdfBtn) downloadPdfBtn.disabled = false;
         }
 
         async function askQuestion() {
@@ -721,37 +725,39 @@
             URL.revokeObjectURL(url);
         }
 
-        function downloadPDF() {
-            if (!currentReport) return;
-            // Open report in new window for printing/saving as PDF
-            const htmlContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Research Limitations Report</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
-                        h1 { border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-                        h2 { color: #2c3e50; margin-top: 30px; }
-                        h3 { color: #3498db; }
-                        ul { padding-left: 20px; }
-                        li { margin: 5px 0; }
-                        p { margin: 10px 0; color: #555; }
-                        .source { font-size: 12px; color: #777; }
-                        @media print {
-                            body { padding: 20px; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${parseMarkdown(currentReport)}
-                </body>
-                </html>
-            `;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(htmlContent);
-            printWindow.document.close();
-            printWindow.print();
+        async function downloadPDF() {
+            if (!currentReport || !sessionId) return;
+
+            const btn = document.getElementById('downloadPdfBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/synthesize/pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sid: sessionId })
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to generate PDF');
+                }
+
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `limitations_${document.getElementById('topic').value || 'report'}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+            } catch (e) {
+                alert('Error generating PDF: ' + e.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
 
         function clearSession() {
@@ -788,12 +794,14 @@
             const reportBtn = document.getElementById('reportBtn');
             const clearBtn = document.getElementById('clearBtn');
             const downloadBtn = document.getElementById('downloadBtn');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
             
             if (questionInput) questionInput.disabled = true;
             if (askBtn) askBtn.disabled = true;
             if (reportBtn) reportBtn.disabled = true;
             if (clearBtn) clearBtn.disabled = true;
             if (downloadBtn) downloadBtn.disabled = true;
+            if (downloadPdfBtn) downloadPdfBtn.disabled = true;
         }
 
         // Allow Enter to send question (Shift+Enter for new line)

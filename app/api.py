@@ -1,16 +1,12 @@
 """
-Simplified FastAPI backend for PubMed Research Limitation Analyzer.
+FastAPI backend for PubMed Research Limitation Analyzer.
 """
 from __future__ import annotations
 
 import asyncio
 import json
-import sys
 import uuid
 import re
-from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import AsyncGenerator, Optional, List
 from io import BytesIO
@@ -20,16 +16,15 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-try:
-    from weasyprint import HTML
-except ImportError:
-    HTML = None
 
 # ── project imports ────────────────────────────────────────────────────────────
+import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from config.settings import settings
 from src.orchestrator import ResearchLimitationAnalyzer
 from src.logger import logger
+from app.services.pdf_service import generate_pdf_from_markdown
 
 # ── app setup ──────────────────────────────────────────────────────────────────
 app = FastAPI(title="PubMed Limitation Analyzer", version="1.0.0")
@@ -43,26 +38,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-STATIC_DIR = Path(__file__).parent / "static"
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-_executor = ThreadPoolExecutor(max_workers=4)
-
 # ── session store ──────────────────────────────────────────────────────────────
-@dataclass
 class Session:
-    sid: str
-    analyzer: ResearchLimitationAnalyzer = field(
-        default_factory=ResearchLimitationAnalyzer
-    )
-    topic: Optional[str] = None
-    ingested: bool = False
-    n_papers: int = 0
-    n_chunks: int = 0
-    paper_type: Optional[str] = None
-    date_from: int = 2020
-    date_to: int = 2025
-    results: list = field(default_factory=list)  # Store extracted results
+    def __init__(self, sid: str):
+        self.sid = sid
+        self.analyzer = ResearchLimitationAnalyzer(
+            model_name=settings.openai_model,
+            embedding_model=settings.openai_embedding_model,
+            top_k=settings.retrieval_top_k,
+        )
+        self.topic: Optional[str] = None
+        self.ingested: bool = False
+        self.n_papers: int = 0
+        self.n_chunks: int = 0
+        self.paper_type: Optional[str] = None
+        self.date_from: int = 2020
+        self.date_to: int = 2025
+        self.results: list = []
 
 
 _sessions: dict[str, Session] = {}
@@ -85,7 +80,7 @@ class IngestRequest(BaseModel):
     paper_type: Optional[str] = None
     max_papers: int = 10
     method: Optional[str] = None
-    exclude_terms: Optional[list[str]] = None
+    exclude_terms: Optional[List[str]] = None
     reset_knowledge_base: bool = True
 
 
@@ -102,8 +97,10 @@ class SynthesizeRequest(BaseModel):
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Serve the main HTML interface."""
-    html_path = Path(__file__).parent / "static" / "index.html"
-    return FileResponse(str(html_path))
+    html_path = STATIC_DIR / "index.html"
+    if html_path.exists():
+        return FileResponse(str(html_path))
+    return HTMLResponse("<h1>Static files not found</h1>", 404)
 
 
 @app.get("/api/session/{sid}")
@@ -260,7 +257,7 @@ async def ingest(req: IngestRequest):
 
     # Run ingestion in thread pool
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(_executor, run_ingest)
+    result = await loop.run_in_executor(None, run_ingest)
 
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
@@ -286,7 +283,7 @@ async def ask(req: AskRequest):
             return {"error": str(exc)}
 
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(_executor, run_ask)
+    result = await loop.run_in_executor(None, run_ask)
 
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
@@ -312,7 +309,7 @@ async def synthesize(req: SynthesizeRequest):
             return {"error": str(exc)}
 
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(_executor, run_synth)
+    result = await loop.run_in_executor(None, run_synth)
 
     if "error" in result:
         raise HTTPException(status_code=500, detail=result["error"])
@@ -322,42 +319,32 @@ async def synthesize(req: SynthesizeRequest):
 
 @app.post("/api/synthesize/pdf")
 async def synthesize_pdf(req: SynthesizeRequest):
-    """Generate a full synthesis report as PDF - NOT AVAILABLE"""
-    raise HTTPException(
-        status_code=501,
-        detail="PDF generation is not available in this deployment. Please use the Markdown download option instead."
+    """Generate a full synthesis report as PDF."""
+    if req.sid not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    session = _sessions[req.sid]
+    if not session.ingested:
+        raise HTTPException(status_code=400, detail="Run ingestion first")
+
+    def run_pdf():
+        try:
+            report = session.analyzer.synthesize()
+            title = f"Research Limitations Report - {session.topic}"
+            pdf_buffer = generate_pdf_from_markdown(report, title)
+            return pdf_buffer
+        except Exception as exc:
+            logger.exception(f"PDF generation error: {exc}")
+            return None
+
+    loop = asyncio.get_event_loop()
+    pdf_buffer = await loop.run_in_executor(None, run_pdf)
+
+    if pdf_buffer is None:
+        raise HTTPException(status_code=500, detail="Failed to generate PDF")
+
+    filename = f"limitations_{session.topic.replace(' ', '_')}.pdf"
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
-
-
-def report_to_html(report: str) -> str:
-    """Convert markdown report to HTML."""
-    import re
-    
-    # Simple markdown to HTML conversion
-    html = report
-    
-    # Headers
-    html = re.sub(r'^# (.+)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
-    html = re.sub(r'^## (.+)$', r'<h2>\1</h2>', html, flags=re.MULTILINE)
-    html = re.sub(r'^### (.+)$', r'<h3>\1</h3>', html, flags=re.MULTILINE)
-    
-    # Bold
-    html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
-    
-    # Lists
-    html = re.sub(r'^- (.+)$', r'<li>\1</li>', html, flags=re.MULTILINE)
-    html = re.sub(r'(<li>.*</li>\n?)+', lambda m: f'<ul>{m.group(0)}</ul>', html)
-    
-    # Convert remaining lines to paragraphs (avoid HTML tags)
-    lines = html.split('\n')
-    result_lines = []
-    for line in lines:
-        line = line.strip()
-        if not line:
-            result_lines.append('')
-        elif line.startswith('<'):  # Already HTML tag
-            result_lines.append(line)
-        else:
-            result_lines.append(f'<p>{line}</p>')
-    
-    return '\n'.join(result_lines)

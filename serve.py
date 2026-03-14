@@ -60,7 +60,7 @@ def main() -> None:
     print(f"  Press Ctrl+C to stop\n")
 
     uvicorn.run(
-        "web.api:app",
+        "app.api:app",
         host=args.host,
         port=args.port,
         reload=args.reload,
