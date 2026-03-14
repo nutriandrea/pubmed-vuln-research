@@ -1,0 +1,22 @@
+{
+  "pmid": "31968370",
+  "title": "[Keratoplasty in Germany: Systematic Analysis of the Quality Reports of German Hospitals between 2006 and 2017].",
+  "authors": [
+    "Daniel Moritz Claudius",
+    "B\u00f6hringer Daniel",
+    "Lapp Thabo",
+    "Maier Philip Christian",
+    "Reinhard Thomas",
+    "Lang Stefan J"
+  ],
+  "journal": "Klinische Monatsblatter fur Augenheilkunde",
+  "year": "2021",
+  "abstract": "Keratoplasty is considered the most frequently performed type of transplantation in humans. Traditionally, penetrating keratoplasty has been the most common procedure. However, over the last 15 years, the importance of posterior lamellar keratoplasty has increased for the treatment of Fuchs endothelial dystrophy and bullous keratopathy. In Germany, based on national surveys, it was suggested that there was a trend towards lamellar keratoplasty. The main objective of this study was to determine whether the proportion of lamellar keratoplasties carried out in Germany between 2006 and 2017 had increased. Furthermore, the number of keratoplasties carried out as HLA-matched (HLA: human leukocyte antigen) keratoplasties should be calculated. The numbers of all keratoplasties carried out as lamellar/penetrating and HLA-matched keratoplasties was extracted from the hospital quality reports published between 2006 and 2017. Descriptive statistical analysis was carried out in R (www.r-project.org). Between 2006 and 2017, 43,021 keratoplasties were carried out in Germany. The number of keratoplasties increased from 2,849 (2006) to 8,231 (2017). The number of penetrating keratoplasties remained stable. The proportion of lamellar keratoplasties increased from 6.5% (2006) to 61.4% (2017). The proportion of HLA-matched keratoplasties was below 20% and declined between 2010 and 2017 (2010: 19.7%; 2017: 9.8%). In Germany, posterior lamellar keratoplasty has become increasingly important. Since 2014, the number of lamellar keratoplasties has exceeded the number of penetrating keratoplasties. However, the number of penetrating keratoplasties remained stable between 2006 and 2017 and still plays an important role in the management of patients with predominantly stromal or corneal defects affecting all layers. The decreasing number of HLA-matched keratoplasties is most likely due to the lack of clear evidence of a significant reduction in the rejection rates in cases of normal risk keratoplasty.",
+  "publication_types": [
+    "Journal Article"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1055/a-1035-9442",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/31968370/"
+}

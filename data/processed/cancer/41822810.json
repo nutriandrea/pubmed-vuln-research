@@ -1,0 +1,34 @@
+{
+  "pmid": "41822810",
+  "paper_title": "A narrative review of the current state of circulating tumor cells in prostate cancer diagnostic.",
+  "year": "2025",
+  "authors": [
+    "Vovdenko Stanislav",
+    "Bazarkin Andrey",
+    "Morozov Andrey",
+    "Golan Shay",
+    "Babaevskaya Diana",
+    "Singla Nirmish",
+    "Baniel Jack",
+    "Brill Boris",
+    "Moreno Sierra Jesus",
+    "Gomez Rivas Juan",
+    "Enikeev Dmitry"
+  ],
+  "journal": "Hellenic urology",
+  "doi": "10.23736/s2241-9136.25.00070-2",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/41822810/",
+  "raw_limitation_text": "[CONCLUSION]\nOverall, CTC detection for PCa screening, early detection, and prognosis in localized disease offers limited added value. Conversely, in metastatic PCa it shows promising results as a prognostic marker. AR-V7 expression by CTCs is a predictor of response to ARS inhibitors, while PSMA expression in CTCs is associated with metastases, poor prognosis, and suboptimal treatment response. OCT4, HER2, and ezrin in CTCs are also predictors of poor prognosis and treatment response, but the data is limited. If explored further, microRNAs could serve as a potential PCa biomarker, but it is still unclear whether they can substitute CTCs or provide additional data.",
+  "limitations": [
+    "CTC detection for PCa screening, early detection, and prognosis in localized disease offers limited added value."
+  ],
+  "research_gaps": [
+    "The data on OCT4, HER2, and ezrin in CTCs as predictors of poor prognosis and treatment response is limited.",
+    "It is still unclear whether microRNAs can substitute CTCs or provide additional data."
+  ],
+  "future_work": [
+    "If explored further, microRNAs could serve as a potential PCa biomarker."
+  ],
+  "methodological_weaknesses": [],
+  "used_full_text": true
+}

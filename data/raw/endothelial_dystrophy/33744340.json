@@ -1,0 +1,19 @@
+{
+  "pmid": "33744340",
+  "title": "Enhanced expression of SLC4A11 by tert-Butylhydroquinone is mediated by direct binding of Nrf2 to the promoter of SLC4A11.",
+  "authors": [
+    "Guha Sanjukta",
+    "Roy Sanhita"
+  ],
+  "journal": "Free radical biology & medicine",
+  "year": "2021",
+  "abstract": "SLC4A11, a Na\u00a0+\u00a0dependent OH transporter, is highly expressed in the epithelium and endothelium of the cornea. Mutations in SLC4A11 cause congenital hereditary endothelial dystrophy (CHED), a progressive disease with gradual loss of vision and characterized by degeneration and dysfunction of corneal endothelial cells. SLC4A11 expression is also responsive to oxidative stress. Thus, understanding of SLC4A11 gene regulation is of utmost importance for therapeutic interventions. However, it remains elusive how SLC4A11 is regulated at transcriptional and translational level. Bioinformatics analysis of the SLC4A11 promoter was performed using TRANSFAC. SLC4A11 promoter constructs were generated and exposed to tert-Butylhydroquinone (tBHQ) or cotransfected with Nuclear factor erythroid 2-related factor 2 (Nrf2) expression plasmid and promoter activity was determined. The expression of SLC4A11 was also determined by quantitative PCR and immunoblot analysis. The binding of Nrf2 to the promoter of SLC4A11 was validated by chromatin immunoprecipitation assay. Induction of Nrf2 by tBHQ or overexpression of Nrf2 caused increased expression of SLC4A11 in HeLa and human corneal endothelial cells. A conserved Nrf2 binding sequence was found in the promoter of SLC4A11 of several mammalian species. Reporter gene assays showed transcriptional activation of the SLC4A11 promoter in response to tBHQ treatment and Nrf2 overexpression. ChIP analysis validated Nrf2 binding to the conserved sequence of the SLC4A11 promoter. Induction of the Nrf2 pathway also resulted in increased endogenous SLC4A11 protein abundance. On the other hand, depletion of Nrf2 inhibited both transcriptional and translational activities of SLC4A11. In summary, we determined direct Nrf2 binding to antioxidant responsive element site within the SLC4A11 promoter, and observed increased expression of SLC4A11 by Nrf2 inducers. To the best of our knowledge, this is the first study showing Nrf2 exerts an important role in regulation of SLC4A11 gene expression.",
+  "publication_types": [
+    "Journal Article",
+    "Research Support, Non-U.S. Gov't"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1016/j.freeradbiomed.2021.03.006",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/33744340/"
+}

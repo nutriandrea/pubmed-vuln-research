@@ -1,0 +1,26 @@
+{
+  "pmid": "31691803",
+  "title": "Defective cell adhesion function of solute transporter, SLC4A11, in endothelial corneal dystrophies.",
+  "authors": [
+    "Malhotra Darpan",
+    "Jung Martin",
+    "Fecher-Trost Claudia",
+    "Lovatt Matthew",
+    "Peh Gary S L",
+    "Noskov Sergei",
+    "Mehta Jodhbir S",
+    "Zimmermann Richard",
+    "Casey Joseph R"
+  ],
+  "journal": "Human molecular genetics",
+  "year": "2020",
+  "abstract": "Corneal endothelial cell (CEnC) loss is often associated with blinding endothelial corneal dystrophies: dominantly inherited, common (5%) Fuchs endothelial corneal dystrophy (FECD) and recessive, rare congenital hereditary endothelial dystrophy (CHED). Mutations of SLC4A11, an abundant corneal solute transporter, cause CHED and some cases of FECD. The link between defective SLC4A11 solute transport function and CEnC loss is, however, unclear. Cell adhesion assays using SLC4A11-transfected HEK293 cells and primary human CEnC revealed that SLC4A11 promotes adhesion to components of Descemet's membrane (DM), the basement membrane layer to which CEnC bind. An antibody against SLC4A11 extracellular loop 3 (EL3) suppressed cell adhesion, identifying EL3 as the DM-binding site. Earlier studies showed that some SLC4A11 mutations cause FECD and CHED by impairing solute transport activity or cell surface trafficking. Without affecting these functions, FECD-causing mutations in SLC4A11-EL3 compromised cell adhesion capacity. In an energy-minimized SLC4A11-EL3 three-dimensional model, these mutations cluster and are buried within the EL3 structure. A GST fusion protein of SLC4A11-EL3 interacts with principal DM protein, COL8A2, as identified by mass spectrometry. Engineered SLC4A11-EL3-containing protein, STIC (SLC4A11-EL3 Transmembrane-GPA Integrated Chimera), promotes cell adhesion in transfected HEK293 cells and primary human CEnC, confirming the cell adhesion role of EL3. Taken together, the data suggest that SLC4A11 directly binds DM to serve as a cell adhesion molecule (CAM). These data further suggest that cell adhesion defects contribute to FECD and CHED pathology. Observations with STIC point toward a new therapeutic direction in these diseases: replacement of lost cell adhesion capacity.",
+  "publication_types": [
+    "Journal Article",
+    "Research Support, Non-U.S. Gov't"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1093/hmg/ddz259",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/31691803/"
+}

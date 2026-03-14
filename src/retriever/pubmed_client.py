@@ -16,7 +16,7 @@ import threading
 import time
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 import xmltodict
 import requests
@@ -25,6 +25,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from src.logger import logger
 from src.retriever.models import PaperMetadata
+from src.retriever.synonym_expander import SynonymExpander
 
 # Bio.Entrez uses module-level globals (email, api_key) which are NOT
 # thread-safe.  This lock serialises all writes to those globals AND all
@@ -53,34 +54,64 @@ class PubMedQueryParams:
         date_to: int = 2025,
         paper_type: Optional[str] = None,
         max_results: int = 20,
+        method: Optional[str] = None,
+        exclude_terms: Optional[List[str]] = None,
+        use_synonym_expansion: bool = True,
     ) -> None:
         self.topic = topic
         self.date_from = date_from
         self.date_to = date_to
         self.paper_type = paper_type
         self.max_results = max_results
+        self.method = method
+        self.exclude_terms = exclude_terms or []
+        self.use_synonym_expansion = use_synonym_expansion
+        self._expander = SynonymExpander()
 
     def build_query(self) -> str:
         """
-        Build the PubMed term string.
+        Build the PubMed term string with title-only search and synonym expansion.
+        
+        Supports:
+        - Simple query: "breast cancer"
+        - OR terms: "term1 OR term2"
+        - Comma-separated: "term1, term2"
+        - Combined with method: topic + method
+        
         Date range is intentionally NOT embedded here — it is passed as
         separate mindate/maxdate/datetype parameters to Entrez.esearch()
         to avoid encoding issues that can trigger HTTP 400 errors.
         """
-        parts = [f"({self.topic}[Title/Abstract])"]
+        # Build the main query with title-only search
+        if self.use_synonym_expansion:
+            query = self._expander.expand_combined_query(
+                main_topic=self.topic,
+                method=self.method,
+                field="Title",
+                exclude_terms=self.exclude_terms,
+            )
+        else:
+            # Fallback to simple title search
+            parts = [f'"{self.topic}"[Title]']
+            if self.method:
+                parts.append(f'"{self.method}"[Title]')
+            query = " AND ".join(parts)
+
+        # Add publication type filter if specified
         if self.paper_type:
             pt_filter = PUBMED_TYPE_MAP.get(
                 self.paper_type.lower().replace(" ", "_"), None
             )
             if pt_filter:
-                parts.append(pt_filter)
+                query = f"{query} AND {pt_filter}"
             else:
                 logger.warning(
                     "Unknown paper_type '{}'. Available: {}",
                     self.paper_type,
                     list(PUBMED_TYPE_MAP.keys()),
                 )
-        return " AND ".join(parts)
+
+        return query
 
 
 class PubMedClient:

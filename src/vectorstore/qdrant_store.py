@@ -20,6 +20,7 @@ from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
+from qdrant_client import models as qdrant_models
 from qdrant_client.models import Distance, VectorParams
 
 from src.logger import logger
@@ -170,3 +171,28 @@ class LimitationVectorStore:
         """Return the total number of stored vectors."""
         info = self._client.get_collection(self._collection_name)
         return info.points_count or 0
+
+    def clear(self) -> None:
+        """Clear all documents from the vector store."""
+        try:
+            # Check if this is an in-memory store by checking the client's location
+            location = getattr(self._client._client, 'location', None)
+            if location == ":memory:":
+                # For in-memory stores, recreate the collection
+                self._client.delete_collection(self._collection_name)
+                self._client.create_collection(
+                    collection_name=self._collection_name,
+                    vectors_config=VectorParams(size=1536, distance=Distance.COSINE),
+                )
+            else:
+                # For persistent stores, delete all points
+                self._client.delete(
+                    collection_name=self._collection_name,
+                    points_selector=qdrant_models.FilterSelector(
+                        filter=qdrant_models.Filter()
+                    )
+                )
+            logger.info("Cleared vector store collection '{}'", self._collection_name)
+        except Exception as exc:
+            logger.error("Failed to clear vector store: {}", exc)
+            raise

@@ -15,16 +15,16 @@
   "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/41819058/",
   "raw_limitation_text": "To evaluate the efficacy and safety of high-dose-rate interstitial VAPBI in women undergoing conservative surgery for low-risk, early invasive breast cancer. Between December 2018 and December 2024, 28 patients were enrolled in this prospective, non-randomized trial. Targeted radiotherapy of the tumor bed was delivered using thin plastic catheters placed at the surgical site, through which a high-dose-rate Ir-192 source was administered. Prescribed doses were 4\u00d76.25 Gy (25 Gy total) or 3\u00d77.45 Gy (22.35 Gy total), delivered over two consecutive working days. With a median follow-up of 60 months (range: 9-84), local recurrence was observed in 2 patients (7.1%). One patient (3.6%) died of liver metastases, and another (3.6%) from a second primary tumor. The 5-year local control rate was 93.7% (95% CI: 88.1-99.4). Late toxicity was limited to grade 1 fibrosis in 6 patients (21.4%) and grade 1 pain in 2 patients (7.1%); no grade \u22652 toxicities occurred. Cosmetic results were excellent or good in all cases. Reducing interstitial treatment duration from 5 to 2 days appears safe and more convenient for patients.",
   "limitations": [
-    "The study is limited by its small sample size of 28 patients."
+    "The study is limited by its small sample size of only 28 patients."
   ],
   "research_gaps": [
     "There is a lack of long-term data beyond the 5-year follow-up period."
   ],
   "future_work": [
-    "Future studies should explore the long-term outcomes and potential late effects of VAPBI."
+    "Future studies should include a larger, randomized control group to validate the findings."
   ],
   "methodological_weaknesses": [
-    "The trial's non-randomized design may introduce bias in the results."
+    "The non-randomized design of the trial may introduce selection bias."
   ],
   "used_full_text": false
 }

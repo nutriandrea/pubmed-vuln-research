@@ -1,0 +1,18 @@
+{
+  "pmid": "34014818",
+  "title": "A Novel Network With Parallel Resolution Encoders for the Diagnosis of Corneal Diseases.",
+  "authors": [
+    "Elsawy Amr",
+    "Abdel-Mottaleb Mohamed"
+  ],
+  "journal": "IEEE transactions on bio-medical engineering",
+  "year": "2021",
+  "abstract": "To propose a deep-learning network for the diagnosis of two corneal diseases: Fuchs' endothlelial dystrophy and keratoconus, based on optical coherence tomography (OCT) images of the cornea. In this paper, we propose a novel network with parallel resolution-specific encoders and composite classification features to directly diagnose Fuchs' endothelial dystrophy and keratoconus using OCT images. Our proposed network consists of a multi-resolution input, multiple parallel encoders, and a composite of convolutional and dense features for classification. The purpose of using parallel resolution-specific encoders is to perform multi-resolution feature fusion. Also, using composite classification features enhances the dense feature learning. We implemented other related networks for comparison with our network and performed k-fold cross-validation on a dataset of 16,721 OCT images. We used saliency maps and sensitivity analysis to visualize our proposed network. The proposed network outperformed other networks with an image classification accuracy of 0.91 and a scan classification accuracy of 0.94. The visualizations show that our network learned better features than other networks. The proposed methods can potentially be a step towards the early diagnosis of corneal diseases, which is necessary to prevent their progression, hence, prevent loss of vision.",
+  "publication_types": [
+    "Journal Article"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1109/TBME.2021.3082152",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/34014818/"
+}

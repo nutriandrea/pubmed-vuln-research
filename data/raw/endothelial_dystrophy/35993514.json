@@ -1,0 +1,20 @@
+{
+  "pmid": "35993514",
+  "title": "Corneal dystrophy mutations R125H and R804H disable SLC4A11 by altering the extracellular pH dependence of the intracellular pK that governs H(OH) transport.",
+  "authors": [
+    "Quade Bianca N",
+    "Marshall Aniko",
+    "Parker Mark D"
+  ],
+  "journal": "American journal of physiology. Cell physiology",
+  "year": "2022",
+  "abstract": "Mutations in the H(OH) conductor SLC4A11 result in corneal endothelial dystrophy. In previous studies using mouse Slc4a11, we showed that the pK value that governs the intracellular pH dependence of SLC4A11 (pK) is influenced by extracellular pH (pH). We also showed that some mutations result in acidic or alkaline shifts in pK, indicating that the pH dependence of SLC4A11 is important for physiological function. An R125H mutant, located in the cytosolic amino terminus of SLC4A11, apparently causes a complete loss of function, yet the anion transport inhibitor 4,4'-diisothiocyano-2,2'-stilbenedisulfonic acid (DIDS) can partially rescue SLC4A11/R125H activity. In the present study we set out to determine whether the effect of R125H is explained by an extreme shift in pK. In  oocytes, we measured SLC4A11-mediated H(OH) conductance while monitoring pH. We find that ) the human corneal variant SLC4A11-B has a more acidic pK than mouse Slc4a11, likely due to the presence of an NH-terminal appendage; ) pK for human SLC4A11 is acid-shifted by raising pH to 10.00; and ) R125H and R804H mutants mediate substantial H(OH) conductances at pH = 10.00, with pK shifted into the wild-type range. These data suggest that the defect in each is a shift in pK at physiological pH, brought about by a disconnection in the mechanisms by which pH influences pK. Using de novo modeling, we show that R125 is located at the cytosolic dimer interface and suggest that this interface is critical for relaying the influence of pH on the external face of the transmembrane domain to the intracellular, pK-determining regions.",
+  "publication_types": [
+    "Journal Article",
+    "Research Support, N.I.H., Extramural"
+  ],
+  "full_text": null,
+  "pmc_id": "PMC9484998",
+  "doi": "10.1152/ajpcell.00221.2022",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/35993514/"
+}

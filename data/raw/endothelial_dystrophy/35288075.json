@@ -1,0 +1,25 @@
+{
+  "pmid": "35288075",
+  "title": "A Fully Automated Segmentation and Morphometric Parameter Estimation System for Assessing Corneal Endothelial Cell Images.",
+  "authors": [
+    "Qu Jing-Hao",
+    "Qin Xiao-Ran",
+    "Peng Rong-Mei",
+    "Xiao Ge-Ge",
+    "Cheng Jian",
+    "Gu Shao-Feng",
+    "Wang Hai-Kun",
+    "Hong Jing"
+  ],
+  "journal": "American journal of ophthalmology",
+  "year": "2022",
+  "abstract": "To develop a fully automated segmentation and morphometric parameter estimation system for assessing corneal endothelial cells from in vivo confocal microscopy images. Artificial intelligence (neural network) study. First, a fully automated deep learning system for assessing corneal endothelial cells was developed using the development set (from 99 subjects). Second, 184 images (from 97 subjects) were used to construct the testing set to evaluate the clinical validity and usefulness of the automated segmentation and morphometric system. Third, the automatically calculated endothelial cell density (ECD) values, Topcon's cell density, and manually calculated ECD were compared. After slit lamp examination, 88 healthy subjects, 2 Fuchs endothelial dystrophy patients, and 7 corneal endotheliitis patients were identified among the 97 subjects in the testing set. The automatedly estimated morphometric parameters for the testing set were an average number of 234 cells, an ECD of 2592 cells/mm, a coefficient of variation in the cell area of 32.14%, and a percentage of hexagonal cells of 54.16%. Pearson's correlation coefficient between the automated ECD and Topcon's cell density and between the manually calculated ECD and Topcon's cell density was 0.932 (P < .01) and 0.818 (P < .01), respectively. The Bland-Altman plot of Topcon's cell density and the automated ECD yielded 95% limits of agreement between 271.94 and -572.46 (concordance correlation coefficient\u00a0=\u00a00.9). A fully automated method for segmenting corneal endothelial cells and estimating morphometric parameters using in vivo confocal microscopy images is more efficient and accurate for assessing the normal corneal endothelium.",
+  "publication_types": [
+    "Journal Article",
+    "Research Support, Non-U.S. Gov't"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1016/j.ajo.2022.02.026",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/35288075/"
+}

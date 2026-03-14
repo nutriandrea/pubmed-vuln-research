@@ -1,0 +1,35 @@
+{
+  "pmid": "41822402",
+  "paper_title": "Replacing Bacitracin With Vancomycin in Adams Triple Antibiotic Solution for Irrigation in Breast Implant Reconstruction: A Retrospective Review of 277 Reconstructions.",
+  "year": "2025",
+  "authors": [
+    "Carr Quinton L",
+    "Connor Colton H",
+    "Cantrell Ryan",
+    "Dodwani Shriya",
+    "Mostovych Alexander L",
+    "Bennett Marcus",
+    "Corey Samuel L",
+    "Weeks Dexter W",
+    "Azzolini Anthony",
+    "Prewitt Carter",
+    "Wilhelmi Bradon J"
+  ],
+  "journal": "Eplasty",
+  "doi": "",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/41822402/",
+  "raw_limitation_text": "Breast reconstruction following mastectomy commonly involves tissue expanders to create a suitable pocket for implantation. The use of triple antibiotic irrigation during tissue expander placement aims to reduce implant-related infections. Implant infections can lead to severe complications, often necessitating revision surgeries that may delay treatment of other conditions, such as cancer. For years, the most common solution used in breast pocket irrigation was the Adams solution, which comprises 80 mg gentamicin, 1 g cefazolin, and 50 000 U bacitracin in 500 mL of normal saline. However, the discontinuation of bacitracin has prompted the search for alternative formulations. Vancomycin, like bacitracin, has been shown to provide gram-positive coverage-only better. This study aims to evaluate the utility of a triple antibiotic solution (TAS) containing gentamicin, cefazolin, and vancomycin as a replacement for bacitracin in reducing infection rates following tissue expander placement. A single-center retrospective chart review was conducted, including 152 patients who underwent a total of 277 breast reconstructions with a TAS comprising 80 mg gentamicin, 1 g cefazolin, and 1 g vancomycin from March 2020 to June 2024. Demographic and clinical data, perioperative characteristics, and postoperative outcomes-including infection rates and culture results-were analyzed. Infections occurred in 6 of 277 reconstructions (2.17% of implants). Methicillin-resistant  was a significant pathogen in infections (50.00%). None of the systemic side effects of vancomycin, including nephrotoxicity, ototoxicity, or vancomycin flushing syndrome, were encountered. Furthermore, no evidence of drug-resistant bacteria was reported in any of the cases. This study highlights the potential utility of vancomycin as an acceptable alternative to bacitracin in triple antibiotic irrigation solution following tissue expander placement post-mastectomy. Additional research could help to further establish vancomycin's efficacy and safety. If validated, this approach could be a temporary alternative to the Adams solution until a better long-term strategy is identified.",
+  "limitations": [
+    "This study is limited by its retrospective design, which may introduce biases and limit the ability to establish causation."
+  ],
+  "research_gaps": [
+    "The authors note that additional research could help to further establish vancomycin's efficacy and safety."
+  ],
+  "future_work": [
+    "Future studies should focus on validating the findings and exploring long-term outcomes associated with the use of vancomycin in this context."
+  ],
+  "methodological_weaknesses": [
+    "The study's single-center design may limit the generalizability of the findings to broader populations."
+  ],
+  "used_full_text": false
+}

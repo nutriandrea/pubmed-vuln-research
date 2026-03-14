@@ -1,0 +1,20 @@
+{
+  "pmid": "35779968",
+  "title": "Application of data mining algorithms to study data trends for corneal transplantation.",
+  "authors": [
+    "Go J A",
+    "Tran J",
+    "Khan M",
+    "Al-Mohtaseb Z"
+  ],
+  "journal": "Journal francais d'ophtalmologie",
+  "year": "2022",
+  "abstract": "To utilize data mining for analysis of corneal transplantations (CT) in Florida from 2005-2014, segmented by demographics, geography, and transplantation technique. A retrospective, database study was performed utilizing data queried from the Healthcare and Cost Utilization Project using Current Procedural Terminology codes for lamellar keratoplasty (ALK), endothelial keratoplasty (EK), and penetrating keratoplasty (PKP). Payer status, ethnic group, age, gender, and geography (urban versus rural) was extracted from each surgical encounter and reconfigured to provide a \"clean\", congruous dataset for statistical analysis. This Institutional Review Board-approved study did not utilize identifiable patient information; thus, individual informed consent was not required. From 2005-2014, CT (n=28,607) represented less than 1% of the total ambulatory surgeries (n=12,695,932) performed in Florida. EK volume increased while PKP and ALK volume decreased, year-over-year. Statistical significance was found between transplantation technique by sex (P<0.001) and ethnic group (P<0.001). The largest sex discrepancy was EK (59% female, 41% male). White patients underwent relatively fewer PKP than EK (71% vs. 83% of totals), while Black patients underwent relatively more PKP than EK (14% vs 6% of totals). Statistical significance was found between techniques by payer (P<0.001). Medicare was the most common payer for all techniques, but ALK and PKP had higher percentages of private insurance and self-pay. No statistical significance was found between techniques by geographic location. Corneal edema (22.4%), endothelial dystrophy (17.5%), and bullous keratopathy (10.9%) were erroneously coded as indications for ALK. Corneal scars (2.5%) and corneal opacity (1.7%) were erroneously coded as indications for EK. CT rates in Florida appear to overrepresent the female sex and underrepresent ethnic minorities, with propensities between PKP and African Americans, EK and female patients, and EK and Medicare reimbursement. Our study further confirms the utility of data mining for providing efficient, detailed, and practical insights into ophthalmology procedures, while highlighting the intrinsic challenges of large datasets.",
+  "publication_types": [
+    "Journal Article"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1016/j.jfo.2022.01.023",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/35779968/"
+}

@@ -1,0 +1,20 @@
+{
+  "pmid": "32520610",
+  "title": "pH dependence of the Slc4a11-mediated H conductance is influenced by intracellular lysine residues and modified by disease-linked mutations.",
+  "authors": [
+    "Quade Bianca N",
+    "Marshall Aniko",
+    "Parker Mark D"
+  ],
+  "journal": "American journal of physiology. Cell physiology",
+  "year": "2020",
+  "abstract": "SLC4A11 is the only member of the SLC4 family that transports protons rather than bicarbonate. SLC4A11 is expressed in corneal endothelial cells, and its mutation causes corneal endothelial dystrophy, although the mechanism of pathogenesis is unknown. We previously demonstrated that the magnitude of the H conductance () mediated by SLC4A11 is increased by rises in intracellular as well as extracellular pH (pH and pH). To better understand this feature and whether it is altered in disease, we studied the pH dependence of wild-type and mutant mouse Slc4a11 expressed in  oocytes. Using voltage-clamp circuitry in conjunction with a H-selective microelectrode and a microinjector loaded with NaHCO, we caused incremental rises in oocyte pH and measured the effect on . We find that the rise of  has a steeper pH dependence at pH\u2009=8.50 than at pH\u2009=7.50. Data gathered at pH\u2009=8.50 can be fit to the Hill equation enabling the calculation of a p value that reports pH dependence. We find that mutation of lysine residues that are close to the first transmembrane span (TM1) causes an alkaline shift in p. Furthermore, two corneal-dystrophy-causing mutations close to the extracellular end of TM1, E399K and T401K (E368K and T370K in mouse), cause an acidic shift in p, while a third mutation in the fourth intracellular loop, R804H (R774H in mouse), causes an alkaline shift in p. This is the first description of determinants of SLC4A11 pH dependence and the first indication that a shift in pH dependence could modify disease expressivity in some cases of corneal dystrophy.",
+  "publication_types": [
+    "Journal Article",
+    "Research Support, N.I.H., Extramural"
+  ],
+  "full_text": null,
+  "pmc_id": "PMC7500215",
+  "doi": "10.1152/ajpcell.00128.2020",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/32520610/"
+}

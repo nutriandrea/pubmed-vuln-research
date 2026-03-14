@@ -1,36 +1,29 @@
 """
-FastAPI backend for the PubMed Research Limitation Analyzer.
-
-Endpoints
----------
-GET  /                      → serve index.html
-POST /api/ingest            → start ingestion pipeline (SSE stream)
-POST /api/ask               → ask a question (SSE stream)
-POST /api/synthesize        → generate full report (SSE stream)
-GET  /api/session/{sid}     → get session status
-DELETE /api/session/{sid}   → clear session
-
-All heavy work runs in a thread pool so the event loop stays unblocked.
-SSE (Server-Sent Events) streams progress messages and the final result
-back to the browser in real time.
+Simplified FastAPI backend for PubMed Research Limitation Analyzer.
 """
-
 from __future__ import annotations
 
 import asyncio
 import json
 import sys
 import uuid
+import re
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator, Optional, List
+from io import BytesIO
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sse_starlette.sse import EventSourceResponse
+try:
+    from weasyprint import HTML
+except ImportError:
+    HTML = None
 
 # ── project imports ────────────────────────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -41,11 +34,19 @@ from src.logger import logger
 # ── app setup ──────────────────────────────────────────────────────────────────
 app = FastAPI(title="PubMed Limitation Analyzer", version="1.0.0")
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 _executor = ThreadPoolExecutor(max_workers=4)
-
 
 # ── session store ──────────────────────────────────────────────────────────────
 @dataclass
@@ -61,6 +62,7 @@ class Session:
     paper_type: Optional[str] = None
     date_from: int = 2020
     date_to: int = 2025
+    results: list = field(default_factory=list)  # Store extracted results
 
 
 _sessions: dict[str, Session] = {}
@@ -82,6 +84,9 @@ class IngestRequest(BaseModel):
     date_to: int = 2025
     paper_type: Optional[str] = None
     max_papers: int = 10
+    method: Optional[str] = None
+    exclude_terms: Optional[list[str]] = None
+    reset_knowledge_base: bool = True
 
 
 class AskRequest(BaseModel):
@@ -93,22 +98,17 @@ class SynthesizeRequest(BaseModel):
     sid: str
 
 
-# ── SSE helpers ────────────────────────────────────────────────────────────────
-def _event(kind: str, data: dict | str) -> dict:
-    payload = data if isinstance(data, str) else json.dumps(data)
-    return {"event": kind, "data": payload}
-
-
 # ── routes ─────────────────────────────────────────────────────────────────────
-
 @app.get("/", response_class=HTMLResponse)
 async def root():
+    """Serve the main HTML interface."""
     html_path = Path(__file__).parent / "static" / "index.html"
     return FileResponse(str(html_path))
 
 
 @app.get("/api/session/{sid}")
 async def session_status(sid: str):
+    """Get session status."""
     if sid not in _sessions:
         raise HTTPException(status_code=404, detail="Session not found")
     s = _sessions[sid]
@@ -126,22 +126,21 @@ async def session_status(sid: str):
 
 @app.delete("/api/session/{sid}")
 async def clear_session(sid: str):
+    """Clear a session."""
     _sessions.pop(sid, None)
     return {"ok": True}
 
 
 @app.post("/api/ingest")
 async def ingest(req: IngestRequest):
-    """
-    Stream ingestion progress via SSE.
-    Sends events: progress, paper, done, error
-    """
+    """Ingest papers and return results."""
     session = _get_or_create(req.sid)
     session.topic = req.topic
     session.date_from = req.date_from
     session.date_to = req.date_to
     session.paper_type = req.paper_type
     session.ingested = False
+    
     # Reset analyzer for fresh ingestion
     session.analyzer = ResearchLimitationAnalyzer(
         model_name=settings.openai_model,
@@ -149,29 +148,36 @@ async def ingest(req: IngestRequest):
         top_k=settings.retrieval_top_k,
     )
 
-    queue: asyncio.Queue = asyncio.Queue()
-    loop = asyncio.get_event_loop()
-
     def run_ingest():
-        """Runs in thread pool, pushes events into the async queue."""
-        import json as _json
+        """Runs in thread pool."""
         from src.retriever.pubmed_client import PubMedClient, PubMedQueryParams
         from src.extractor.section_extractor import LimitationExtractor
         from src.processor.document_builder import DocumentBuilder
         from src.vectorstore.qdrant_store import LimitationVectorStore
         from langchain_openai import OpenAIEmbeddings
-        import re, time
+        import re
 
         def slug(t): return re.sub(r"[^a-z0-9]+", "_", t.lower()).strip("_")
-        def push(kind, data): loop.call_soon_threadsafe(queue.put_nowait, (kind, data))
 
         try:
-            push("progress", {"step": 1, "msg": f"Searching PubMed for «{req.topic}»…"})
+            logger.info(f"Starting ingestion for topic: {req.topic}")
+            if req.method:
+                logger.info(f"Method: {req.method}")
+            if req.exclude_terms:
+                logger.info(f"Exclude terms: {req.exclude_terms}")
 
             raw_dir = settings.raw_data_dir / slug(req.topic)
             processed_dir = settings.processed_data_dir / slug(req.topic)
             raw_dir.mkdir(parents=True, exist_ok=True)
             processed_dir.mkdir(parents=True, exist_ok=True)
+
+            # Reset knowledge base if requested
+            if req.reset_knowledge_base and session.analyzer._vector_store:
+                try:
+                    session.analyzer._vector_store.clear()
+                    logger.info("Knowledge base cleared")
+                except Exception as e:
+                    logger.warning(f"Could not clear vector store: {e}")
 
             client = PubMedClient(
                 email=settings.ncbi_email,
@@ -184,51 +190,32 @@ async def ingest(req: IngestRequest):
                 date_to=req.date_to,
                 paper_type=req.paper_type,
                 max_results=req.max_papers,
+                method=req.method,
+                exclude_terms=req.exclude_terms,
+                use_synonym_expansion=True,
             )
             papers = client.search(params)
 
             if not papers:
-                push("error", {"msg": "No papers found. Try a broader query or date range."})
-                return
+                logger.warning("No papers found")
+                return {"error": "No papers found"}
 
-            push("progress", {
-                "step": 1,
-                "msg": f"Found {len(papers)} papers. Starting extraction…",
-                "total": len(papers),
-            })
+            logger.info(f"Found {len(papers)} papers")
 
             extractor = LimitationExtractor(model_name=settings.openai_model)
             extracted_list = []
-            for i, paper in enumerate(papers):
-                push("paper", {
-                    "index": i + 1,
-                    "total": len(papers),
-                    "pmid": paper.pmid,
-                    "title": paper.title,
-                    "year": paper.year,
-                    "journal": paper.journal,
-                })
+            for paper in papers:
                 extracted = extractor.extract(paper)
                 extracted_list.append(extracted)
-                out_path = processed_dir / f"{paper.pmid}.json"
-                import json as jj
-                with open(out_path, "w") as f:
-                    jj.dump(extracted.model_dump(), f, indent=2)
-                push("progress", {
-                    "step": 2,
-                    "msg": f"Extracted limitations from {i+1}/{len(papers)}: {paper.title[:60]}",
-                    "done": i + 1,
-                    "total": len(papers),
-                })
 
-            push("progress", {"step": 3, "msg": "Chunking and embedding documents…"})
+            logger.info("Building documents")
             builder = DocumentBuilder(
                 chunk_size=settings.chunk_size,
                 chunk_overlap=settings.chunk_overlap,
             )
             documents = builder.build(extracted_list)
 
-            push("progress", {"step": 4, "msg": f"Indexing {len(documents)} chunks into Qdrant…"})
+            logger.info(f"Indexing {len(documents)} chunks into Qdrant")
             embeddings = OpenAIEmbeddings(model=settings.openai_embedding_model)
             if settings.qdrant_in_memory:
                 vs = LimitationVectorStore.create_in_memory(
@@ -257,93 +244,176 @@ async def ingest(req: IngestRequest):
             session.ingested = True
             session.n_papers = len(papers)
             session.n_chunks = vs.count()
+            session.results = extracted_list
 
-            push("done", {
+            logger.info(f"Ingestion complete: {len(papers)} papers, {session.n_chunks} chunks")
+            return {
                 "sid": session.sid,
                 "n_papers": len(papers),
                 "n_chunks": session.n_chunks,
                 "msg": f"Ready. Indexed {len(papers)} papers ({session.n_chunks} chunks).",
-            })
+            }
 
         except Exception as exc:
-            logger.exception("Ingest error: {}", exc)
-            push("error", {"msg": str(exc)})
+            logger.exception(f"Ingest error: {exc}")
+            return {"error": str(exc)}
 
-    async def stream() -> AsyncGenerator:
-        loop.run_in_executor(_executor, run_ingest)
-        while True:
-            kind, data = await queue.get()
-            yield _event(kind, data)
-            if kind in ("done", "error"):
-                break
+    # Run ingestion in thread pool
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(_executor, run_ingest)
 
-    return EventSourceResponse(stream())
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result
 
 
 @app.post("/api/ask")
 async def ask(req: AskRequest):
-    """Stream the answer to a single question via SSE."""
+    """Answer a question using the RAG pipeline."""
     if req.sid not in _sessions:
         raise HTTPException(status_code=404, detail="Session not found")
     session = _sessions[req.sid]
     if not session.ingested:
         raise HTTPException(status_code=400, detail="Run ingestion first")
 
-    queue: asyncio.Queue = asyncio.Queue()
-    loop = asyncio.get_event_loop()
-
     def run_ask():
-        def push(kind, data): loop.call_soon_threadsafe(queue.put_nowait, (kind, data))
         try:
-            push("progress", {"msg": "Searching knowledge base…"})
             result = session.analyzer.ask_with_sources(req.question)
-            push("done", {
-                "answer": result["answer"],
-                "sources": result["sources"],
-            })
+            return result
         except Exception as exc:
-            logger.exception("Ask error: {}", exc)
-            push("error", {"msg": str(exc)})
+            logger.exception(f"Ask error: {exc}")
+            return {"error": str(exc)}
 
-    async def stream() -> AsyncGenerator:
-        loop.run_in_executor(_executor, run_ask)
-        while True:
-            kind, data = await queue.get()
-            yield _event(kind, data)
-            if kind in ("done", "error"):
-                break
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(_executor, run_ask)
 
-    return EventSourceResponse(stream())
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result
 
 
 @app.post("/api/synthesize")
 async def synthesize(req: SynthesizeRequest):
-    """Stream the full synthesis report via SSE."""
+    """Generate a full synthesis report."""
     if req.sid not in _sessions:
         raise HTTPException(status_code=404, detail="Session not found")
     session = _sessions[req.sid]
     if not session.ingested:
         raise HTTPException(status_code=400, detail="Run ingestion first")
 
-    queue: asyncio.Queue = asyncio.Queue()
-    loop = asyncio.get_event_loop()
-
     def run_synth():
-        def push(kind, data): loop.call_soon_threadsafe(queue.put_nowait, (kind, data))
         try:
-            push("progress", {"msg": "Retrieving all limitation chunks…"})
             report = session.analyzer.synthesize()
-            push("done", {"report": report, "topic": session.topic})
+            return {"report": report, "topic": session.topic}
         except Exception as exc:
-            logger.exception("Synthesize error: {}", exc)
-            push("error", {"msg": str(exc)})
+            logger.exception(f"Synthesize error: {exc}")
+            return {"error": str(exc)}
 
-    async def stream() -> AsyncGenerator:
-        loop.run_in_executor(_executor, run_synth)
-        while True:
-            kind, data = await queue.get()
-            yield _event(kind, data)
-            if kind in ("done", "error"):
-                break
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(_executor, run_synth)
 
-    return EventSourceResponse(stream())
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result
+
+
+@app.post("/api/synthesize/pdf")
+async def synthesize_pdf(req: SynthesizeRequest):
+    """Generate a full synthesis report as PDF."""
+    if req.sid not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    session = _sessions[req.sid]
+    if not session.ingested:
+        raise HTTPException(status_code=400, detail="Run ingestion first")
+
+    try:
+        # Generate the markdown report
+        report = session.analyzer.synthesize()
+        
+        # Get topic safely
+        topic = session.topic or "research"
+        
+        # Convert markdown to HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Research Limitations Report - {topic}</title>
+            <style>
+                @page {{ size: A4; margin: 2cm; }}
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
+                h1 {{ border-bottom: 3px solid #2c3e50; padding-bottom: 10px; }}
+                h2 {{ color: #2c3e50; margin-top: 30px; page-break-after: avoid; }}
+                h3 {{ color: #3498db; }}
+                ul {{ padding-left: 20px; }}
+                li {{ margin: 8px 0; }}
+                p {{ margin: 10px 0; color: #555; }}
+                .source {{ font-size: 11px; color: #777; font-style: italic; }}
+                .page-break {{ page-break-before: always; }}
+            </style>
+        </head>
+        <body>
+            <h1>Research Limitations Report</h1>
+            <p><strong>Topic:</strong> {topic}</p>
+            <p><strong>Date:</strong> {datetime.now().strftime('%Y-%m-%d')}</p>
+            <p><strong>Papers Analyzed:</strong> {session.n_papers}</p>
+            <hr>
+            {report_to_html(report)}
+        </body>
+        </html>
+        """
+        
+        # Generate PDF using WeasyPrint
+        # Import inside function to avoid dependency issues
+        from weasyprint import HTML
+        pdf_bytes = HTML(string=html_content).write_pdf()
+        
+        # Return PDF as streaming response
+        return StreamingResponse(
+            BytesIO(pdf_bytes),
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="limitations_{topic.replace(" ", "_")}.pdf"'
+            }
+        )
+        
+    except Exception as exc:
+        logger.exception(f"PDF synthesis error: {exc}")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+def report_to_html(report: str) -> str:
+    """Convert markdown report to HTML."""
+    import re
+    
+    # Simple markdown to HTML conversion
+    html = report
+    
+    # Headers
+    html = re.sub(r'^# (.+)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
+    html = re.sub(r'^## (.+)$', r'<h2>\1</h2>', html, flags=re.MULTILINE)
+    html = re.sub(r'^### (.+)$', r'<h3>\1</h3>', html, flags=re.MULTILINE)
+    
+    # Bold
+    html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
+    
+    # Lists
+    html = re.sub(r'^- (.+)$', r'<li>\1</li>', html, flags=re.MULTILINE)
+    html = re.sub(r'(<li>.*</li>\n?)+', lambda m: f'<ul>{m.group(0)}</ul>', html)
+    
+    # Convert remaining lines to paragraphs (avoid HTML tags)
+    lines = html.split('\n')
+    result_lines = []
+    for line in lines:
+        line = line.strip()
+        if not line:
+            result_lines.append('')
+        elif line.startswith('<'):  # Already HTML tag
+            result_lines.append(line)
+        else:
+            result_lines.append(f'<p>{line}</p>')
+    
+    return '\n'.join(result_lines)

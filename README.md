@@ -1,207 +1,231 @@
 # PubMed RAG Limitation Analyzer
 
-A CLI tool that retrieves biomedical literature from PubMed, extracts research limitations using LLMs, indexes them in a vector store (Qdrant), and enables question‑answering or report generation.
+A CLI and web-based tool that retrieves biomedical literature from PubMed, extracts research limitations using LLMs, indexes them in a vector store (Qdrant), and enables question-answering or report generation.
 
 ## Features
 
-- **PubMed retrieval** – search by topic, date range, publication type, and max results (uses your NCBI API key if provided).
-- **Limitation extraction** – two‑stage heuristic + LLM pipeline that pulls out:
+- **PubMed Retrieval** - Search by topic, date range, publication type, and max results
+- **Synonym Expansion** - Automatic query expansion with biomedical synonyms
+- **Combined Search** - Support for multiple topics/methods with logical operators (AND, OR, NOT)
+- **Title-Only Search** - Queries search only in article titles for precision
+- **Limitation Extraction** - Two-stage heuristic + LLM pipeline that pulls out:
   - Explicit study limitations
   - Identified research gaps
   - Suggested future work
   - Methodological weaknesses
-- **Vector storage** – chunks are embedded (OpenAI embeddings) and stored in Qdrant (in‑memory by default, configurable to a remote instance).
-- **RAG pipeline** – retrieve relevant chunks and synthesize a structured limitations report or answer specific questions with citations.
-- **CLI commands**:
-  - `ingest` – fetch papers, extract limitations, and index them.
-  - `ask` – ingest (if needed) then answer a question with source citations.
-  - `report` – ingest + generate a full limitations report (Markdown output).
+- **Vector Storage** - Chunks are embedded and stored in Qdrant (in-memory or persistent)
+- **RAG Pipeline** - Retrieve relevant chunks and synthesize structured limitations report
+- **PDF Generation** - Export reports as professional PDF documents
+
+## Quick Start
+
+### 1. Setup
+
+```bash
+# Clone or navigate to project
+cd pubmed-rag
+
+# Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Configure Environment
+
+Create `.env` file (or copy from `.env.example`):
+
+```env
+# OpenAI API Key (required)
+OPENAI_API_KEY=sk-...
+
+# NCBI PubMed (optional but recommended)
+NCBI_API_KEY=your_api_key
+NCBI_EMAIL=your_email@example.com
+```
+
+Get NCBI API key: https://www.ncbi.nlm.nih.gov/account/
+
+### 3. Usage
+
+#### Web Interface (Recommended)
+
+```bash
+source .venv/bin/activate
+python serve.py
+```
+
+Open browser to: **http://localhost:8000**
+
+#### CLI Commands
+
+```bash
+# Ingest papers only
+python main.py ingest --topic "breast cancer" --max-papers 10
+
+# Ask a specific question
+python main.py ask --topic "breast cancer" --question "What are the dataset limitations?"
+
+# Generate full report
+python main.py report --topic "breast cancer" --max-papers 15 --output report.md
+```
+
+## Advanced Features
+
+### Combined Search
+
+Combine multiple topics and methods:
+
+| Field | Example | Description |
+|-------|---------|-------------|
+| Topic | `breast cancer detection` | Main research topic |
+| Method/Technology | `deep learning` | Method to search for |
+| Exclude Terms | `animal study, in vitro` | Terms to exclude |
+
+**Example**: Search for AI in cancer detection
+- **Topic**: `cancer detection`
+- **Method**: `deep learning`
+- **Result**: Papers about cancer detection using deep learning
+
+### Query Expansion
+
+The system automatically expands queries with synonyms:
+
+| Input | Expanded Query |
+|-------|----------------|
+| `breast cancer` | `("breast cancer"[Title] OR "breast tumor"[Title] OR "mammary carcinoma"[Title])` |
+
+### Knowledge Base Reset
+
+Each new search creates a fresh knowledge base by default:
+- Previous vectors are cleared
+- Only current topic papers are indexed
+- Toggle with "Reset knowledge base" checkbox in web interface
+
+## API Reference
+
+### Ingest Endpoint
+```bash
+POST /api/ingest
+Body:
+{
+  "topic": "cancer detection",
+  "method": "deep learning",
+  "exclude_terms": ["animal study"],
+  "max_papers": 10,
+  "reset_knowledge_base": true
+}
+```
+
+### Ask Endpoint
+```bash
+POST /api/ask
+Body:
+{
+  "sid": "session-id",
+  "question": "What are the main limitations?"
+}
+```
+
+### Synthesize Endpoint
+```bash
+POST /api/synthesize
+Body: {"sid": "session-id"}
+
+POST /api/synthesize/pdf  # Returns PDF file
+Body: {"sid": "session-id"}
+```
 
 ## Project Structure
 
 ```
 pubmed-rag/
-├── .env                 # environment variables (API keys, settings)
-├ .env.example          # template for .env
-├── main.py              # CLI entry point
-├── requirements.txt     # Python dependencies
+├── main.py                      # CLI entry point
+├── serve.py                     # Web server entry point
+├── requirements.txt             # Python dependencies
+├── .env                         # Environment variables
+├── .env.example                 # Template for .env
 ├── config/
-│   └── settings.py      # Pydantic settings loaded from .env
+│   └── settings.py              # Pydantic settings loaded from .env
 ├── src/
 │   ├── __init__.py
-│   ├── logger.py        # Loguru logger configuration
-│   ├── orchestrator.py  # coordinates ingestion pipeline
-│   ├── extractor/
-│   │   ├── __init__.py
-│   │   ├── models.py    # Pydantic models for extracted data
-│   │   └── section_extractor.py  # heuristic + LLM limitation extraction
-│   ├── llm/
-│   │   └── ...          # (if needed) LLM wrappers
-│   ├── processor/
-│   │   └── document_builder.py   # chunking logic
-│   ├── rag/
-│   │   └── pipeline.py      # Retrieval‑Augmented Generation for synthesis/QA
+│   ├── logger.py                # Loguru logger configuration
+│   ├── orchestrator.py          # Coordinates ingestion pipeline
 │   ├── retriever/
-│   │   ├── __init__.py
-│   │   ├── pubmed_client.py   # NCBI E‑utils wrapper with caching & full‑text fetch
-│   │   └── models.py          # PaperMetadata, etc.
+│   │   ├── pubmed_client.py     # PubMed API client with synonym expansion
+│   │   ├── synonym_expander.py  # Query expansion with synonyms
+│   │   ├── models.py            # PaperMetadata, etc.
+│   │   └── __init__.py
+│   ├── extractor/
+│   │   ├── section_extractor.py # Heuristic + LLM limitation extraction
+│   │   ├── models.py            # Pydantic models for extracted data
+│   │   └── __init__.py
+│   ├── processor/
+│   │   └── document_builder.py  # Document chunking logic
+│   ├── rag/
+│   │   ├── pipeline.py          # RAG pipeline for Q&A
+│   │   └── prompts.py           # LLM prompts
 │   └── vectorstore/
-│       ├── __init__.py
-│       ├── qdrant_store.py    # Qdrant wrapper (in‑memory or remote)
+│       ├── qdrant_store.py      # Qdrant wrapper
 │       └── models.py
-├── data/
-│   ├── raw/                 # downloaded XML/JSON from PubMed (optional)
-│   └── processed/           # intermediate artifacts (optional)
-├── logs/                    # log files (Loguru)
-├── tests/                   # pytest tests
-└── web/                     # (placeholder) for a future web interface
+├── web/
+│   ├── api.py                   # FastAPI backend
+│   ├── static/
+│   │   └── index.html           # Web interface
+│   └── __init__.py
+└── tests/                       # Unit tests
 ```
 
-## Setup
+## Data Flow
 
-1. **Clone the repository** (or copy the files).
+1. **Search** → PubMed API with title-only query + synonym expansion
+2. **Extract** → LLM identifies limitations/gaps/future work from papers
+3. **Chunk** → Documents are split into searchable chunks
+4. **Index** → Chunks embedded and stored in Qdrant vector store
+5. **Query** → RAG retrieves relevant chunks and generates answers
+6. **Export** → Reports generated as Markdown or PDF
 
-2. **Create a Python virtual environment** (recommended):
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate   # on Windows: .venv\Scripts\activate
-   ```
+## Requirements
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+- Python 3.10+
+- OpenAI API key
+- NCBI API key (optional, for higher rate limits)
+- Qdrant (in-memory by default, or persistent server)
 
-4. **Configure environment variables**:
-   - Copy `.env.example` to `.env` and fill in the required keys:
-     ```bash
-     cp .env.example .env
-     ```
-   - Edit `.env`:
-     ```dotenv
-     # OpenAI (required for LLM and embeddings)
-     OPENAI_API_KEY=sk-...          # your OpenAI API key
-     OPENAI_MODEL=gpt-4o-mini       # optional, default
-     OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+## Troubleshooting
 
-     # NCBI / PubMed (optional but recommended to avoid rate limits)
-     NCBI_API_KEY=your_ncbi_key     # get at https://www.ncbi.nlm.nih.gov/account/
-     NCBI_EMAIL=your_email@example.com
+### Common Issues
 
-     # Qdrant (leave as-is for local in‑memory mode)
-     QDRANT_HOST=localhost
-     QDRANT_PORT=6333
-     # QDRANT_API_KEY=your_qdrant_cloud_key  # only if using Qdrant Cloud
-
-     # Logging
-     LOG_LEVEL=INFO                 # DEBUG for verbose extraction logs
-
-     # Data paths (defaults are fine)
-     RAW_DATA_DIR=data/raw
-     PROCESSED_DATA_DIR=data/processed
-     ```
-
-5. **Initialize directories** (done automatically on first run via `settings.ensure_dirs()`).
-
-## Usage
-
-All commands are executed via `main.py`.  
-Make sure the virtual environment is activated (`source .venv/bin/activate`).
-
-### Common options
-
-| Option            | Description                                                                 |
-|-------------------|-----------------------------------------------------------------------------|
-| `--topic`         | Research topic to search for (required).                                    |
-| `--date-from`     | Start year (inclusive), default `2020`.                                     |
-| `--date-to`       | End year (inclusive), default current year.                                 |
-| `--paper-type`    | Filter by PubMed publication type (`review`, `clinical_trial`, etc.).       |
-| `--max-papers`    | Maximum number of papers to retrieve and process (default `10`).            |
-| `--preview`       | (only for `ingest`) show a quick synthesis after indexing.                |
-| `--output FILE`   | (only for `report`) save the generated Markdown report to `FILE`.         |
-
-### Commands
-
-#### 1. Ingest only
-Fetch papers, extract limitations, and store them in the vector store.
+**Port already in use:**
 ```bash
-python main.py ingest \
-    --topic "breast cancer detection" \
-    --date-from 2020 \
-    --date-to 2025 \
-    --max-papers 15
+lsof -i :8000
+kill -9 <PID>
 ```
 
-Add `--preview` to see a short limitations report after ingestion.
+**API key not set:**
+Check `.env` file has valid `OPENAI_API_KEY`
 
-#### 2. Ask a question
-Perform ingestion (if the topic isn’t already indexed) then answer a specific question with citations.
+**Rate limits:**
+Add NCBI API key to `.env` for 10 req/s vs 3 req/s
+
+**Memory issues:**
+Use persistent Qdrant server instead of in-memory mode
+
+## Development
+
+### Run Tests
 ```bash
-python main.py ask \
-    --topic "breast cancer detection" \
-    --question "What are the main dataset limitations reported in the literature?" \
-    --max-papers 12
+pytest tests/
 ```
 
-The answer will be returned in Markdown, followed by a list of source papers (PMID, year, title, PubMed URL).
+### Add Synonyms
+Edit `src/retriever/synonym_expander.py` to add custom synonyms
 
-#### 3. Full report
-Ingest and generate a structured limitations report (Markdown) that groups findings by category (Dataset Limitations, Methodological Weaknesses, etc.).
-```bash
-python main.py report \
-    --topic "deep learning MRI" \
-    --date-from 2021 \
-    --date-to 2025 \
-    --max-papers 20 \
-    --output report.md
-```
-
-The report will be printed to stdout and, if `--output` is given, also written to the specified file.
-
-## How It Works (High‑Level)
-
-1. **Retrieval** – `PubMedClient` uses NCBI’s E‑utils (`esearch` + `efetch`) to get article metadata (PMID, title, abstract, journal, year, etc.). If an NCBI API key and email are provided, full‑text XML from PMC is requested when available.
-
-2. **Section extraction** – `LimitationExtractor` first tries to pull named sections (Limitations, Discussion, Future Work, Conclusions) via regex heuristics on the full text. If insufficient text is found, it falls back to the abstract (or the first 6000 chars of full text). The selected text is then sent to an LLM (GPT‑4o‑mini by default) with a prompt that instructs it to return a JSON object containing four lists: `limitations`, `research_gaps`, `future_work`, `methodological_weaknesses`. The LLM output is validated and attached to a `PaperMetadata` record.
-
-3. **Chunking & embedding** – Each paper’s extracted fields (and optionally the raw text) are turned into `Document` objects (via `langchain_core.documents.Document`). A `RecursiveCharacterTextSplitter` splits them into chunks (~1000 chars with 200 overlap). Chunks are embedded using the OpenAI embedding model.
-
-4. **Vector storage** – Chunks are added to a Qdrant collection named `research_limitations`. By default Qdrant runs in‑memory (no server needed); point `QDRANT_HOST`/`QDRANT_PORT` to a remote instance for persistence.
-
-5. **RAG synthesis / QA** – 
-   - For a **report**, the pipeline retrieves the top‑k chunks (default 8) for the given topic, concatenates them, and asks the LLM to produce a structured markdown report grouped by limitation categories, citing sources.
-   - For **question answering**, the same retrieval step is performed, then the LLM answers the question using only the retrieved context, again returning inline citations (PMID, year).
-
-## Logging
-
-- Log level is controlled by `LOG_LEVEL` in `.env` (`INFO` by default).
-- Detailed debug logs (including the raw text sent to the LLM and the LLM’s raw JSON response) appear when `LOG_LEVEL=DEBUG`.
-- Logs are written to `logs/pubmed_rag.log` (rotating every 10 MB, kept 7 days) and also echoed to stderr with colours (via Loguru).
-
-## Extending / Customizing
-
-- **Change LLM** – edit `src/extractor/section_extractor.py` (model name, temperature) or `src/rag/pipeline.py`.
-- **Adjust chunking** – modify `chunk_size` / `chunk_overlap` in `config/settings.py` or directly in `src/processor/document_builder.py`.
-- **Different vector store** – replace `src/vectorstore/qdrant_store.py` with another implementation (FAISS, Chroma, Pinecone, etc.) while keeping the same interface (`add_documents`, `similarity_search`).
-- **Additional extraction fields** – extend `_LLMExtractionSchema` and the prompt in `section_extractor.py`, then propagate changes through the orchestrator and RAG pipeline.
-
-## Testing
-
-Run the test suite with:
-```bash
-pytest
-```
-Tests live in the `tests/` directory and cover:
-- PubMed client parsing
-- Extraction heuristic and LLM fallback (mocked)
-- Chunking logic
-- Qdrant wrapper (in‑memory)
-- End‑to‑end CLI commands (using small mocks)
+### Modify Prompts
+Edit `src/rag/prompts.py` to customize LLM behavior
 
 ## License
 
-This project is provided as‑is for educational and research purposes. See the LICENSE file (if present) for details.
-
----
-
-**Enjoy analyzing research limitations!** If you encounter any issues, check the logs (`logs/pubmed_rag.log`) or run with `LOG_LEVEL=DEBUG` for more insight.
+MIT License

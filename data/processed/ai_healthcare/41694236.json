@@ -1,0 +1,26 @@
+{
+  "pmid": "41694236",
+  "paper_title": "Data Fit for Health Equity: Learning Health Systems, AI, and the STANDING Together Recommendations.",
+  "year": "2026",
+  "authors": [
+    "Laws Elinor",
+    "Cockburn Neil"
+  ],
+  "journal": "Learning health systems",
+  "doi": "10.1002/lrh2.70053",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/41694236/",
+  "raw_limitation_text": "[FUTURE_WORK]\nSTANDING Together are the first recommendations that aim to encourage transparency and proactive evaluation of the impact of health datasets and AI on population groups. To encourage adoption, the STANDING Together recommendations require support from regulators, funders, standards organizations, amongst others. While the recommendations have been acknowledged by different organizations across the world, including the UK's Medicines and Healthcare products Regulatory Agency (MHRA), the Australian Therapeutic Goods Administration (TGA), and UK funder the Medical Research Council (MRC), there is work to be done to improve the dissemination, adoption, and implementation. There is also a lack of tools to support responsible AI development such as documentation standards and operating guidance to accompany the STANDING Together recommendations. At present, the recommendations represent best\u2010practice guidance, and we expect tools for operationalizing them to be developed and disseminated during adoption.\n\nSuccessful implementation will require time and resources from developers and implementers of healthcare datasets and AI healthcare technologies, but the end goal must be kept in mind: striving for digital healthcare innovation that is safe, effective, and equitable. These outcomes will likely accrue to patients in the medium to long term after transparent data reporting practices are implemented and risks of AI bias can be mitigated. The recommendations are not designed to be implemented in their entirety in all settings, and their implementation may require variable interpretation by different LHS depending on their context. We encourage users of the STANDING Together recommendations to publish not only documentation itself, but also experiences in implementing the recommendations for the benefit of community learning and development, contributing to a changing culture towards transparent data use.",
+  "limitations": [
+    "The recommendations are not designed to be implemented in their entirety in all settings, and their implementation may require variable interpretation by different LHS depending on their context."
+  ],
+  "research_gaps": [
+    "There is a lack of tools to support responsible AI development such as documentation standards and operating guidance to accompany the STANDING Together recommendations."
+  ],
+  "future_work": [
+    "We encourage users of the STANDING Together recommendations to publish not only documentation itself, but also experiences in implementing the recommendations for the benefit of community learning and development."
+  ],
+  "methodological_weaknesses": [
+    "Successful implementation will require time and resources from developers and implementers of healthcare datasets and AI healthcare technologies."
+  ],
+  "used_full_text": true
+}

@@ -1,0 +1,26 @@
+{
+  "pmid": "32700559",
+  "title": "Corneal optical density in Fuchs endothelial dystrophy determined by anterior segment optical coherence tomography.",
+  "authors": [
+    "Wertheimer Christian M",
+    "Elhardt Carolin",
+    "Wartak Andreas",
+    "Luft Nikolaus",
+    "Kassumeh Stefan",
+    "Dirisamer Martin",
+    "Siedlecki Jakob",
+    "Vounotrypidis Efstathios",
+    "Priglinger Siegfried G",
+    "Mayer Wolfgang J"
+  ],
+  "journal": "European journal of ophthalmology",
+  "year": "2021",
+  "abstract": "In this study, we propose a method to grade corneal stromal opacity using optical density measurements by anterior segment optical coherence tomography (AS-OCT) and validate the approach in Fuchs endothelial corneal dystrophy (FECD). A retrospective analysis of human corneal OCT scans was performed on 48 eyes of 32 patients with FECD and 33 control eyes of 21 patients using the Carl Zeiss Cirrus HD-OCT 5000. In addition, corneal edema in fresh rabbit cadaver eyes was artificially induced by distilled water and imaged with the Thorlabs TELESTO-II spectral domain OCT at different time points during saturation. The increase of opacity due to corneal edema was proposed to directly correlate with enhanced reflectivity sites in the OCT images, corresponding to higher optical density. The increase was determined as the image area above a statistically established gray-scale value using ImageJ and correlated with other disease characteristics. Optical densities in human corneas showed significant differences between FECD patients and the control group (\u2009=\u20090.002). The increased optical densities determined in FECD corneas correlated well with other disease characteristics such as corneal pachymetry or visual acuity. Likewise, rabbit corneas showed a time dependent increase in thickness and in corneal optical density during soaking in distilled water. This study presents corneal optical density by AS-OCT as an objective value for corneal changes in FECD. Complementing other diagnostic tools in FECD the assessment of corneal optical density may identify progression of FECD, gauge novel therapeutic strategies and support risk and benefit analyses for corneal surgery.",
+  "publication_types": [
+    "Journal Article"
+  ],
+  "full_text": null,
+  "pmc_id": null,
+  "doi": "10.1177/1120672120944796",
+  "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/32700559/"
+}

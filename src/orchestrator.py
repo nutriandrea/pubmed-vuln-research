@@ -20,7 +20,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from langchain_openai import OpenAIEmbeddings
 from tqdm import tqdm
@@ -78,13 +78,16 @@ class ResearchLimitationAnalyzer:
         date_to: int = 2025,
         paper_type: Optional[str] = None,
         max_papers: int = 10,
+        method: Optional[str] = None,
+        exclude_terms: Optional[List[str]] = None,
+        reset_knowledge_base: bool = True,
     ) -> int:
         """
         Run the full ingestion pipeline:
-          1. Search PubMed
+          1. Search PubMed with title-only query and synonym expansion
           2. Extract limitations per paper
           3. Chunk and embed documents
-          4. Store in Qdrant
+          4. Store in Qdrant (clearing previous content if reset=True)
 
         Returns the number of documents indexed.
         """
@@ -95,8 +98,17 @@ class ResearchLimitationAnalyzer:
         raw_dir.mkdir(parents=True, exist_ok=True)
         processed_dir.mkdir(parents=True, exist_ok=True)
 
+        # ---- Reset knowledge base if requested ----
+        if reset_knowledge_base and self._vector_store is not None:
+            logger.info("=== Resetting knowledge base ===")
+            try:
+                self._vector_store.clear()
+                logger.info("Knowledge base cleared")
+            except Exception as e:
+                logger.warning(f"Could not clear vector store: {e}")
+
         # ---- Step 1: Retrieve from PubMed ----
-        logger.info("=== STEP 1: PubMed retrieval ===")
+        logger.info("=== STEP 1: PubMed retrieval (title-only with synonyms) ===")
         client = PubMedClient(
             email=settings.ncbi_email,
             api_key=settings.ncbi_api_key,
@@ -108,6 +120,9 @@ class ResearchLimitationAnalyzer:
             date_to=date_to,
             paper_type=paper_type,
             max_results=max_papers,
+            method=method,
+            exclude_terms=exclude_terms,
+            use_synonym_expansion=True,
         )
         papers: list[PaperMetadata] = client.search(params)
         logger.info("Retrieved {} papers", len(papers))
@@ -184,17 +199,18 @@ class ResearchLimitationAnalyzer:
     def ask(self, question: str) -> str:
         """Ask a free-form question about research limitations."""
         self._require_rag()
-        return self.rag.ask(question)
+        return self.rag.ask(question)  # type: ignore
 
     def ask_with_sources(self, question: str) -> dict:
         """Ask a question and return answer + source references."""
         self._require_rag()
-        return self.rag.ask_with_sources(question)
+        return self.rag.ask_with_sources(question)  # type: ignore
 
     def synthesize(self) -> str:
         """Generate the full structured limitations report for the ingested topic."""
         self._require_rag()
-        return self.rag.synthesize(topic=self.topic, n_papers=self._n_papers)
+        topic = self.topic if self.topic else ""
+        return self.rag.synthesize(topic=topic, n_papers=self._n_papers)  # type: ignore
 
     # ------------------------------------------------------------------ #
     # Helpers
