@@ -322,77 +322,11 @@ async def synthesize(req: SynthesizeRequest):
 
 @app.post("/api/synthesize/pdf")
 async def synthesize_pdf(req: SynthesizeRequest):
-    """Generate a full synthesis report as PDF."""
-    if req.sid not in _sessions:
-        raise HTTPException(status_code=404, detail="Session not found")
-    session = _sessions[req.sid]
-    if not session.ingested:
-        raise HTTPException(status_code=400, detail="Run ingestion first")
-
-    try:
-        # Generate the markdown report
-        report = session.analyzer.synthesize()
-        
-        # Get topic safely
-        topic = session.topic or "research"
-        
-        # Convert markdown to HTML
-        html_content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Research Limitations Report - {topic}</title>
-            <style>
-                @page {{ size: A4; margin: 2cm; }}
-                body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
-                h1 {{ border-bottom: 3px solid #2c3e50; padding-bottom: 10px; }}
-                h2 {{ color: #2c3e50; margin-top: 30px; page-break-after: avoid; }}
-                h3 {{ color: #3498db; }}
-                ul {{ padding-left: 20px; }}
-                li {{ margin: 8px 0; }}
-                p {{ margin: 10px 0; color: #555; }}
-                .source {{ font-size: 11px; color: #777; font-style: italic; }}
-                .page-break {{ page-break-before: always; }}
-            </style>
-        </head>
-        <body>
-            <h1>Research Limitations Report</h1>
-            <p><strong>Topic:</strong> {topic}</p>
-            <p><strong>Date:</strong> {datetime.now().strftime('%Y-%m-%d')}</p>
-            <p><strong>Papers Analyzed:</strong> {session.n_papers}</p>
-            <hr>
-            {report_to_html(report)}
-        </body>
-        </html>
-        """
-        
-        # Generate PDF using WeasyPrint (if available)
-        try:
-            from weasyprint import HTML
-            pdf_bytes = HTML(string=html_content).write_pdf()
-            
-            # Ensure pdf_bytes is not None
-            if pdf_bytes is None:
-                raise ValueError("WeasyPrint returned None for PDF generation")
-            
-            # Return PDF as streaming response
-            return StreamingResponse(
-                BytesIO(pdf_bytes),
-                media_type="application/pdf",
-                headers={
-                    "Content-Disposition": f'attachment; filename="limitations_{topic.replace(" ", "_")}.pdf"'
-                }
-            )
-        except (ImportError, OSError) as e:
-            # Fallback: return error message if WeasyPrint is not available
-            raise HTTPException(
-                status_code=501,
-                detail=f"PDF generation not available: {str(e)}. Please use Markdown download instead."
-            )
-        
-    except Exception as exc:
-        logger.exception(f"PDF synthesis error: {exc}")
-        raise HTTPException(status_code=500, detail=str(exc))
+    """Generate a full synthesis report as PDF - NOT AVAILABLE"""
+    raise HTTPException(
+        status_code=501,
+        detail="PDF generation is not available in this deployment. Please use the Markdown download option instead."
+    )
 
 
 def report_to_html(report: str) -> str:

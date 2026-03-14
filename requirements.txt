@@ -104,4 +104,3 @@ xxhash==3.6.0
 yarl==1.23.0
 zopfli==0.4.1
 zstandard==0.25.0
-weasyprint==68.1
