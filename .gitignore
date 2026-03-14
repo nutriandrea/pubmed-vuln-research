@@ -20,9 +20,8 @@ venv/
 env/
 
 # Data (keep structure, ignore content)
-data/raw/*.json
-data/raw/*.xml
-data/processed/*.json
+data/**/*.json
+data/**/*.xml
 data/embeddings/
 
 # Vector DB local storage
