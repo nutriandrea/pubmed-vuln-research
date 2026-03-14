@@ -606,12 +606,17 @@
         }
 
         function enableUI() {
-            document.getElementById('questionInput').disabled = false;
-            document.getElementById('askBtn').disabled = false;
-            document.getElementById('reportBtn').disabled = false;
-            document.getElementById('clearBtn').disabled = false;
-            document.getElementById('downloadBtn').disabled = false;
-            document.getElementById('downloadPdfBtn').disabled = false;
+            const questionInput = document.getElementById('questionInput');
+            const askBtn = document.getElementById('askBtn');
+            const reportBtn = document.getElementById('reportBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            if (questionInput) questionInput.disabled = false;
+            if (askBtn) askBtn.disabled = false;
+            if (reportBtn) reportBtn.disabled = false;
+            if (clearBtn) clearBtn.disabled = false;
+            if (downloadBtn) downloadBtn.disabled = false;
         }
 
         async function askQuestion() {
@@ -693,49 +698,7 @@
             }
         }
 
-        async function downloadPDF() {
-            if (!isIngested) return;
 
-            const btn = document.getElementById('downloadPdfBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Generating PDF...';
-
-            try {
-                const res = await fetch('/api/synthesize/pdf', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sid: sessionId })
-                });
-
-                if (!res.ok) {
-                    const error = await res.json();
-                    if (res.status === 501) {
-                        // PDF generation not available
-                        alert('PDF generation is not available on this deployment. Please use the Markdown download option instead.');
-                        return;
-                    }
-                    throw new Error(error.detail || 'PDF generation failed');
-                }
-
-                // Get the blob from the response
-                const blob = await res.blob();
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `limitations_${document.getElementById('topic').value.replace(/\s+/g, '_') || 'report'}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-            } catch (e) {
-                alert(`Error generating PDF: ${e.message}`);
-                console.error('PDF generation error:', e);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '📄 Download PDF';
-            }
-        }
 
         function parseMarkdown(md) {
             // Simple markdown parser
@@ -799,22 +762,38 @@
             isIngested = false;
             currentReport = '';
 
-            document.getElementById('sessionInfo').textContent = 'No session';
-            document.getElementById('stats').style.display = 'none';
-            document.getElementById('progressLog').innerHTML = '<div class="log-entry">Session cleared. Ready for new search.</div>';
-            document.getElementById('chatMessages').innerHTML = '<div class="message ai"><div class="message-content">Enter a question after ingesting papers.</div></div>';
-            document.getElementById('reportContent').innerHTML = '<p style="color: #777;">Generate a report after ingesting papers.</p>';
+            const sessionInfo = document.getElementById('sessionInfo');
+            if (sessionInfo) sessionInfo.textContent = 'No session';
+            
+            const stats = document.getElementById('stats');
+            if (stats) stats.style.display = 'none';
+            
+            const progressLog = document.getElementById('progressLog');
+            if (progressLog) progressLog.innerHTML = '<div class="log-entry">Session cleared. Ready for new search.</div>';
+            
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) chatMessages.innerHTML = '<div class="message ai"><div class="message-content">Enter a question after ingesting papers.</div></div>';
+            
+            const reportContent = document.getElementById('reportContent');
+            if (reportContent) reportContent.innerHTML = '<p style="color: #777;">Generate a report after ingesting papers.</p>';
 
             // Reset status bar
             setProgress(0);
-            document.getElementById('statusText').textContent = 'Ready';
+            const statusText = document.getElementById('statusText');
+            if (statusText) statusText.textContent = 'Ready';
 
-            document.getElementById('questionInput').disabled = true;
-            document.getElementById('askBtn').disabled = true;
-            document.getElementById('reportBtn').disabled = true;
-            document.getElementById('clearBtn').disabled = true;
-            document.getElementById('downloadBtn').disabled = true;
-            document.getElementById('downloadPdfBtn').disabled = true;
+            // Disable UI elements
+            const questionInput = document.getElementById('questionInput');
+            const askBtn = document.getElementById('askBtn');
+            const reportBtn = document.getElementById('reportBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            if (questionInput) questionInput.disabled = true;
+            if (askBtn) askBtn.disabled = true;
+            if (reportBtn) reportBtn.disabled = true;
+            if (clearBtn) clearBtn.disabled = true;
+            if (downloadBtn) downloadBtn.disabled = true;
         }
 
         // Allow Enter to send question (Shift+Enter for new line)
