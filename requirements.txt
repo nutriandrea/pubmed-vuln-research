@@ -19,6 +19,7 @@ fastapi==0.135.1
 fonttools==4.62.1
 frozenlist==1.8.0
 grpcio==1.78.0
+gunicorn==25.1.0
 h11==0.16.0
 h2==4.3.0
 hpack==4.1.0
@@ -96,7 +97,6 @@ uuid_utils==0.14.1
 uvicorn==0.41.0
 uvloop==0.22.1
 watchfiles==1.1.1
-weasyprint==68.1
 webencodings==0.5.1
 websockets==16.0
 xmltodict==1.0.4
@@ -104,4 +104,4 @@ xxhash==3.6.0
 yarl==1.23.0
 zopfli==0.4.1
 zstandard==0.25.0
-gunicorn==25.1.0
+weasyprint==68.1

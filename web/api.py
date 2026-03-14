@@ -366,19 +366,29 @@ async def synthesize_pdf(req: SynthesizeRequest):
         </html>
         """
         
-        # Generate PDF using WeasyPrint
-        # Import inside function to avoid dependency issues
-        from weasyprint import HTML
-        pdf_bytes = HTML(string=html_content).write_pdf()
-        
-        # Return PDF as streaming response
-        return StreamingResponse(
-            BytesIO(pdf_bytes),
-            media_type="application/pdf",
-            headers={
-                "Content-Disposition": f'attachment; filename="limitations_{topic.replace(" ", "_")}.pdf"'
-            }
-        )
+        # Generate PDF using WeasyPrint (if available)
+        try:
+            from weasyprint import HTML
+            pdf_bytes = HTML(string=html_content).write_pdf()
+            
+            # Ensure pdf_bytes is not None
+            if pdf_bytes is None:
+                raise ValueError("WeasyPrint returned None for PDF generation")
+            
+            # Return PDF as streaming response
+            return StreamingResponse(
+                BytesIO(pdf_bytes),
+                media_type="application/pdf",
+                headers={
+                    "Content-Disposition": f'attachment; filename="limitations_{topic.replace(" ", "_")}.pdf"'
+                }
+            )
+        except (ImportError, OSError) as e:
+            # Fallback: return error message if WeasyPrint is not available
+            raise HTTPException(
+                status_code=501,
+                detail=f"PDF generation not available: {str(e)}. Please use Markdown download instead."
+            )
         
     except Exception as exc:
         logger.exception(f"PDF synthesis error: {exc}")

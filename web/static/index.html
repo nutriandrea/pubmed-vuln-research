@@ -711,6 +711,11 @@
 
                 if (!res.ok) {
                     const error = await res.json();
+                    if (res.status === 501) {
+                        // PDF generation not available
+                        alert('PDF generation is not available on this deployment. Please use the Markdown download option instead.');
+                        return;
+                    }
                     throw new Error(error.detail || 'PDF generation failed');
                 }
 
