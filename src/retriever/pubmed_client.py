@@ -68,58 +68,58 @@ class PubMedQueryParams:
         self.use_synonym_expansion = use_synonym_expansion
         self._expander = SynonymExpander()
 
-def build_query(self) -> str:
-        """
-        Build the PubMed term string. 
-        
-        If the topic contains advanced PubMed syntax (like [Mesh], [tiab], or parentheses),
-        it returns the query as-is to preserve professional search filtering.
-        Otherwise, it applies title-only search and optional synonym expansion.
-        
-        Supports:
-            - Advanced Query: "(term1[Mesh] OR term2[tiab])" -> Returns as-is
-            - Simple query: "breast cancer" -> Becomes "breast cancer"[Title]
-            - Combined with method: topic + method -> Becomes "topic"[Title] AND "method"[Title]
-        """
-        
-        # Check if the user is using advanced PubMed tags or complex grouping.
-        # If '[' or '(' is present, we bypass the automatic [Title] wrapping 
-        # to allow specialized fields like [Mesh], [tiab], etc.
-        if "[" in self.topic or "(" in self.topic:
-            logger.info("Advanced query detected. Bypassing automatic title-wrapping.")
-            query = self.topic
-        else:
-            # Standard logic for simple search terms
-            if self.use_synonym_expansion:
-                # Expand synonyms but limit search to the Title field by default
-                query = self._expander.expand_combined_query(
-                    main_topic=self.topic,
-                    method=self.method,
-                    field="Title",
-                    exclude_terms=self.exclude_terms,
-                )
+    def build_query(self) -> str:
+            """
+            Build the PubMed term string. 
+            
+            If the topic contains advanced PubMed syntax (like [Mesh], [tiab], or parentheses),
+            it returns the query as-is to preserve professional search filtering.
+            Otherwise, it applies title-only search and optional synonym expansion.
+            
+            Supports:
+                - Advanced Query: "(term1[Mesh] OR term2[tiab])" -> Returns as-is
+                - Simple query: "breast cancer" -> Becomes "breast cancer"[Title]
+                - Combined with method: topic + method -> Becomes "topic"[Title] AND "method"[Title]
+            """
+            
+            # Check if the user is using advanced PubMed tags or complex grouping.
+            # If '[' or '(' is present, we bypass the automatic [Title] wrapping 
+            # to allow specialized fields like [Mesh], [tiab], etc.
+            if "[" in self.topic or "(" in self.topic:
+                logger.info("Advanced query detected. Bypassing automatic title-wrapping.")
+                query = self.topic
             else:
-                # Fallback to simple title search if expansion is disabled
-                parts = [f'"{self.topic}"[Title]']
-                if self.method:
-                    parts.append(f'"{self.method}"[Title]')
-                query = " AND ".join(parts)
-
-        # Append publication type filter (e.g., Review, Clinical Trial) if selected in UI
-        if self.paper_type:
-            pt_filter = PUBMED_TYPE_MAP.get(
-                self.paper_type.lower().replace(" ", "_"), None
-            )
-            if pt_filter:
-                query = f"({query}) AND {pt_filter}"
-            else:
-                logger.warning(
-                    "Unknown paper_type '{}'. Available: {}",
-                    self.paper_type,
-                    list(PUBMED_TYPE_MAP.keys()),
+                # Standard logic for simple search terms
+                if self.use_synonym_expansion:
+                    # Expand synonyms but limit search to the Title field by default
+                    query = self._expander.expand_combined_query(
+                        main_topic=self.topic,
+                        method=self.method,
+                        field="Title",
+                        exclude_terms=self.exclude_terms,
+                    )
+                else:
+                    # Fallback to simple title search if expansion is disabled
+                    parts = [f'"{self.topic}"[Title]']
+                    if self.method:
+                        parts.append(f'"{self.method}"[Title]')
+                    query = " AND ".join(parts)
+    
+            # Append publication type filter (e.g., Review, Clinical Trial) if selected in UI
+            if self.paper_type:
+                pt_filter = PUBMED_TYPE_MAP.get(
+                    self.paper_type.lower().replace(" ", "_"), None
                 )
-
-        return query
+                if pt_filter:
+                    query = f"({query}) AND {pt_filter}"
+                else:
+                    logger.warning(
+                        "Unknown paper_type '{}'. Available: {}",
+                        self.paper_type,
+                        list(PUBMED_TYPE_MAP.keys()),
+                    )
+    
+            return query
 
 class PubMedClient:
     """
