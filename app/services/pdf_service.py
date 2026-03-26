@@ -21,8 +21,8 @@ def generate_pdf_from_markdown(markdown_text: str, title: str = "Research Limita
     
     # Add a title
     pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, title, ln=True, align="C")
-    pdf.ln(10)
+    pdf.multi_cell(0, 10, title, align="C") # multi_cell to avoid crashes with long titles
+    pdf.ln(5)
     
     # Parse markdown and add to PDF
     pdf.set_font("Arial", "", 12)
@@ -34,60 +34,42 @@ def generate_pdf_from_markdown(markdown_text: str, title: str = "Research Limita
     for line in lines:
         line = line.strip()
         if not line:
-            pdf.ln(5)
+            if in_list:
+                pdf.ln(2)
+            else: 
+                pdf.ln(5)
             continue
             
         # Headers
         if line.startswith('# '):
-            if in_list:
-                pdf.ln(5)
-                in_list = False
+            in_list = False
             pdf.set_font("Arial", "B", 14)
-            pdf.cell(0, 10, line[2:], ln=True)
+            pdf.multi_cell(0, 10, line[2:])
             pdf.set_font("Arial", "", 12)
         elif line.startswith('## '):
-            if in_list:
-                pdf.ln(5)
-                in_list = False
+            in_list = False
             pdf.set_font("Arial", "B", 12)
-            pdf.cell(0, 8, line[3:], ln=True)
+            pdf.multi_cell(0, 8, line[3:])
             pdf.set_font("Arial", "", 12)
         elif line.startswith('### '):
-            if in_list:
-                pdf.ln(5)
-                in_list = False
+            in_list = False
             pdf.set_font("Arial", "B", 11)
-            pdf.cell(0, 8, line[4:], ln=True)
+            pdf.cell(0, 8, line[4:])
             pdf.set_font("Arial", "", 12)
         # Lists
         elif line.startswith('- '):
-            if not in_list:
-                in_list = True
+            in_list = True
             pdf.set_font("Arial", "", 11)
-            pdf.cell(10, 6, "")
-            pdf.multi_cell(0, 6, line[2:])
-        # Bold text
-        elif '**' in line:
-            if in_list:
-                pdf.ln(3)
-                in_list = False
-            # Simple bold replacement
-            parts = re.split(r'\*\*(.*?)\*\*', line)
-            for i, part in enumerate(parts):
-                if i % 2 == 1:
-                    pdf.set_font("Arial", "B", 11)
-                else:
-                    pdf.set_font("Arial", "", 11)
-                pdf.cell(0, 6, part, ln=True if i == len(parts) - 1 else False)
-            if len(parts) == 1:
-                pdf.ln(6)
-        # Regular text
+            current_x = pdf.get_x()
+            pdf.set_x(current_x + 10)
+            pdf.multi_cell(0, 6, f"• {line[2:]}")
+            pdf.set_x(current_x)
+        # Regular text or Bold
         else:
-            if in_list:
-                pdf.ln(3)
-                in_list = False
+            in_list = False
             pdf.set_font("Arial", "", 11)
-            pdf.multi_cell(0, 6, line)
+            clean_line = line.replace('**', '')
+            pdf.multi_cell(0, 6, clean_line)
     
     # Save to buffer
     buffer = BytesIO()
