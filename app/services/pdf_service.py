@@ -67,7 +67,7 @@ def generate_pdf_from_markdown(markdown_text: str, title: str = "Research Report
         # Handle Unordered Lists (- or *)
         elif line.startswith('- ') or line.startswith('* '):
             # Replace markdown symbol with a standard bullet point
-            clean_text = "• " + line[2:].strip()
+            clean_text = "- " + line[2:].strip()
             pdf.multi_cell(w=effective_width, h=6, txt=clean_text)
             
         # Handle Regular Paragraphs
