@@ -16,13 +16,14 @@ def generate_pdf_from_markdown(markdown_text: str, title: str = "Research Limita
     Returns:
         BytesIO: PDF content in memory
     """
-    pdf = FPDF()
+    pdf = FPDF(orientation="P", unit="mm", format="A4")
+    pdf.set_margins(left=15, top=15, right=15)
     pdf.add_page()
     
     # Add a title
     pdf.set_font("Arial", "B", 16)
-    pdf.multi_cell(0, 10, title, align="C") # multi_cell to avoid crashes with long titles
-    pdf.ln(5)
+    pdf.multi_cell(w=180, h=10, txt=title, align="C")
+    pdf.ln(10)
     
     # Parse markdown and add to PDF
     pdf.set_font("Arial", "", 12)
@@ -34,10 +35,7 @@ def generate_pdf_from_markdown(markdown_text: str, title: str = "Research Limita
     for line in lines:
         line = line.strip()
         if not line:
-            if in_list:
-                pdf.ln(2)
-            else: 
-                pdf.ln(5)
+            pdf.ln(5)
             continue
             
         # Headers
@@ -60,10 +58,7 @@ def generate_pdf_from_markdown(markdown_text: str, title: str = "Research Limita
         elif line.startswith('- '):
             in_list = True
             pdf.set_font("Arial", "", 11)
-            current_x = pdf.get_x()
-            pdf.set_x(current_x + 10)
-            pdf.multi_cell(0, 6, f"• {line[2:]}")
-            pdf.set_x(current_x)
+            pdf.multi_cell(180, 6, f"  • {line[2:]}")
         # Regular text or Bold
         else:
             in_list = False
