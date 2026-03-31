@@ -53,10 +53,15 @@ class PubMedQueryParams:
         date_from: int = 2020,
         date_to: int = 2025,
         paper_type: Optional[str] = None,
-        max_results: int = 20,
+        max_results: int = 5000,
         method: Optional[str] = None,
         exclude_terms: Optional[List[str]] = None,
         use_synonym_expansion: bool = True,
+        # Advanced filters
+        language: Optional[str] = None,  # "eng", "ita", "spa"
+        free_full_text: bool = False,
+        has_abstract: bool = True,
+        journal: Optional[str] = None,
     ) -> None:
         self.topic = topic
         self.date_from = date_from
@@ -66,6 +71,11 @@ class PubMedQueryParams:
         self.method = method
         self.exclude_terms = exclude_terms or []
         self.use_synonym_expansion = use_synonym_expansion
+        # Advanced filters
+        self.language = language
+        self.free_full_text = free_full_text
+        self.has_abstract = has_abstract
+        self.journal = journal
         self._expander = SynonymExpander()
 
     def build_query(self) -> str:
@@ -118,7 +128,32 @@ class PubMedQueryParams:
                         self.paper_type,
                         list(PUBMED_TYPE_MAP.keys()),
                     )
-    
+            
+            # Advanced filters
+            filters = []
+            
+            # Language filter
+            if self.language:
+                filters.append(f"{self.language}[Language]")
+            
+            # Free full text filter
+            if self.free_full_text:
+                filters.append("free full text[All]")
+            
+            # Has abstract filter
+            if self.has_abstract:
+                filters.append("hasabstract[All]")
+            
+            # Journal filter
+            if self.journal:
+                # Wrap journal name in quotes if not already
+                journal_name = self.journal.strip('"')
+                filters.append(f'"{journal_name}"[Journal]')
+            
+            # Add all filters to query
+            for f in filters:
+                query = f"({query}) AND {f}"
+            
             return query
 
 class PubMedClient:

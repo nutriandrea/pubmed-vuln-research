@@ -82,6 +82,10 @@ class IngestRequest(BaseModel):
     method: Optional[str] = None
     exclude_terms: Optional[List[str]] = None
     reset_knowledge_base: bool = True
+    language: Optional[str] = None
+    journal: Optional[str] = None
+    free_full_text: Optional[bool] = None
+    has_abstract: Optional[bool] = None
 
 
 class AskRequest(BaseModel):
@@ -190,6 +194,10 @@ async def ingest(req: IngestRequest):
                 method=req.method,
                 exclude_terms=req.exclude_terms,
                 use_synonym_expansion=True,
+                language=req.language,
+                journal=req.journal,
+                free_full_text=req.free_full_text,
+                has_abstract=req.has_abstract,
             )
             papers = client.search(params)
 
