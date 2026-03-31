@@ -208,10 +208,16 @@ async def ingest(req: IngestRequest):
             logger.info(f"Found {len(papers)} papers")
 
             extractor = LimitationExtractor(model_name=settings.openai_model)
-            extracted_list = []
-            for paper in papers:
-                extracted = extractor.extract(paper)
-                extracted_list.append(extracted)
+            
+            def progress_callback(msg_type, data):
+                if msg_type == "progress":
+                    logger.info(f"[{data.get('percent', 0)}%] {data.get('msg', '')}")
+                elif msg_type == "status":
+                    logger.info(data.get('msg', ''))
+                elif msg_type == "complete":
+                    logger.info(f"Batch complete: {data}")
+            
+            extracted_list = extractor.extract_batch(papers, progress_callback=progress_callback)
 
             logger.info("Building documents")
             builder = DocumentBuilder(
