@@ -22,7 +22,7 @@ class ExtractedLimitations(BaseModel):
     doi: str = ""
     pubmed_url: str = ""
 
-    # Raw section text pulled from the paper
+    # Raw section text pulled from the paper (truncated to 500 chars)
     raw_limitation_text: str = ""
 
     # LLM-structured output
@@ -33,6 +33,13 @@ class ExtractedLimitations(BaseModel):
 
     # True when we used full PMC text; False means abstract only
     used_full_text: bool = False
+    
+    # Method used for extraction:
+    # - "full_text_sections": Used regex-extracted sections from PMC full text
+    # - "abstract": Used abstract only
+    # - "full_text_fallback": Used beginning of full text (no good sections found)
+    # - "no_text": No text available for this paper
+    extraction_method: str = "unknown"
 
     @property
     def all_weakness_points(self) -> list[str]:

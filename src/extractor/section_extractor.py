@@ -1,11 +1,14 @@
 """
-Module 2 — Text Extraction
+Module 2 — Text Extraction (Hybrid Approach Optimized)
 
 Two-stage extraction strategy:
-  1. Regex/heuristic extraction of named sections (Discussion, Limitations, etc.)
+  1. Rule-based extraction of named sections (Discussion, Limitations, etc.)
      applied when full text (PMC) is available.
   2. LLM-based extraction applied to abstract or full text when structure
      is ambiguous or only abstract is available.
+
+OPTIMIZATION: Text is truncated to ~2000 chars to reduce LLM tokens while
+maintaining quality. Sections are prioritized: Limitations > Discussion > Abstract.
 
 Public API
 ----------
@@ -28,23 +31,63 @@ from src.retriever.models import PaperMetadata
 from src.extractor.models import ExtractedLimitations
 
 # ------------------------------------------------------------------ #
-# Section header patterns (case-insensitive)
+# Section header patterns (case-insensitive, comprehensive)
 # ------------------------------------------------------------------ #
-_SECTION_PATTERNS: list[tuple[str, re.Pattern]] = [
-    ("limitations", re.compile(
-        r"(?:^|\n)\s*(?:\d+\.?\s*)?(?:study\s+)?limitations?\s*\n",
+# Priority: higher priority sections are processed first
+_SECTION_PATTERNS: list[tuple[int, str, re.Pattern]] = [
+    # Priority 1: Limitations
+    (1, "limitations", re.compile(
+        r"(?:^|\n)\s*(?:\d+\.?\s*)?(?:study\s+)?(?:key\s+)?limitations?\s*[:\-\.]?\s*\n",
         re.IGNORECASE
     )),
-    ("discussion", re.compile(
-        r"(?:^|\n)\s*(?:\d+\.?\s*)?discussion\s*\n",
+    (1, "strengths_and_limitations", re.compile(
+        r"(?:^|\n)\s*(?:strengths?\s+and\s+limitations?)\s*[:\-\.]?\s*\n",
         re.IGNORECASE
     )),
-    ("future_work", re.compile(
-        r"(?:^|\n)\s*(?:\d+\.?\s*)?(?:future\s+(?:work|directions?|research|perspectives?))\s*\n",
+    (1, "limitations_of_the_study", re.compile(
+        r"(?:^|\n)\s*(?:limitations?\s+of\s+(?:the\s+)?(?:study|research|analysis|method))\s*[:\-\.]?\s*\n",
         re.IGNORECASE
     )),
-    ("conclusion", re.compile(
-        r"(?:^|\n)\s*(?:\d+\.?\s*)?conclusions?\s*\n",
+    
+    # Priority 2: Discussion (most papers have this)
+    (2, "discussion", re.compile(
+        r"(?:^|\n)\s*(?:\d+\.?\s*)?discussion\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    (2, "results_and_discussion", re.compile(
+        r"(?:^|\n)\s*(?:results?\s+(?:and|&)?\s*discussion)\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    (2, "discussion_and_conclusions", re.compile(
+        r"(?:^|\n)\s*(?:discussion\s+(?:and|&)\s*conclusions?)\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    
+    # Priority 3: Future work / perspectives
+    (3, "future_work", re.compile(
+        r"(?:^|\n)\s*(?:\d+\.?\s*)?(?:future\s+(?:work|directions?|research|perspectives?|implications?|recommendations?))\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    (3, "future_research", re.compile(
+        r"(?:^|\n)\s*(?:(?:further|additional)\s+(?:research|study|work))\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    
+    # Priority 4: Conclusion
+    (4, "conclusion", re.compile(
+        r"(?:^|\n)\s*(?:\d+\.?\s*)?conclusions?\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    
+    # Priority 5: Weaknesses / shortcomings
+    (5, "weaknesses", re.compile(
+        r"(?:^|\n)\s*(?:(?:methodological\s+)?weaknesses?|shortcomings?|criticisms?|challenges?)\s*[:\-\.]?\s*\n",
+        re.IGNORECASE
+    )),
+    
+    # Priority 6: Implications
+    (6, "implications", re.compile(
+        r"(?:^|\n)\s*(?:clinical\s+)?implications?\s*[:\-\.]?\s*\n",
         re.IGNORECASE
     )),
 ]
@@ -52,7 +95,10 @@ _SECTION_PATTERNS: list[tuple[str, re.Pattern]] = [
 # Section terminators — stop collecting text when one of these is hit
 _NEXT_SECTION = re.compile(
     r"(?:^|\n)\s*(?:\d+\.?\s*)?(?:references?|bibliography|acknowledgements?|funding|"
-    r"author\s+contributions?|conflicts?\s+of\s+interest|appendix|supplementary)\s*\n",
+    r"author\s+contributions?|conflicts?\s+of\s+interest|appendix|supplementary|"
+    r"supplementary\s+(?:materials?|information|tables?|figures?)|"
+    r"additional\s+(?:file|data)|"
+    r"figure\s+(?:legends?|captions?))\s*[:\-\.]?\s*\n",
     re.IGNORECASE,
 )
 
@@ -78,23 +124,27 @@ class _LLMExtractionSchema(BaseModel):
     )
 
 
-_EXTRACTION_PROMPT = ChatPromptTemplate.from_messages([
+# Prompt for SHORT texts (optimized for ~500-2000 chars)
+_SHORT_EXTRACT_PROMPT = ChatPromptTemplate.from_messages([
     (
         "system",
         """You are a scientific literature analyst specializing in identifying
-research weaknesses. Your task is to extract ONLY the following from the
-provided paper text:
+research weaknesses. The text provided is a SELECTED EXCERPT from a paper,
+focused on Discussion/Limitations sections.
+
+Extract ONLY the following from the provided text:
 - Explicit limitations of the study
 - Research gaps identified by the authors
 - Suggested future work or research directions
 - Methodological weaknesses or flaws
 
 Rules:
-- Do NOT summarize strengths or contributions.
-- Do NOT invent limitations not present in the text.
-- Be specific: quote or closely paraphrase the authors' own words.
-- Each item in the lists should be a complete, self-contained sentence.
-- Return valid JSON matching the schema exactly.
+- Focus on EXPLICIT statements about limitations, weaknesses, or gaps.
+- Quote or paraphrase the authors' own words when possible.
+- Each item should be a complete, self-contained sentence.
+- If a category has no explicit mentions, return an empty list.
+- Do NOT invent or assume limitations not present in the text.
+- Do NOT summarize the paper's contributions or strengths.
 
 Schema:
 {{
@@ -106,7 +156,40 @@ Schema:
     ),
     (
         "human",
-        "Paper title: {title}\n\nText to analyze:\n{text}\n\nReturn JSON only.",
+        "Paper title: {title}\nPMID: {pmid}\n\nText to analyze:\n{text}\n\nReturn JSON only.",
+    ),
+])
+
+# Prompt for LONG texts (fallback when excerpt is insufficient)
+_LONG_EXTRACT_PROMPT = ChatPromptTemplate.from_messages([
+    (
+        "system",
+        """You are a scientific literature analyst specializing in identifying
+research weaknesses. Your task is to extract ONLY the following from the
+provided paper text:
+- Explicit limitations of the study
+- Research gaps identified by the authors
+- Suggested future work or research directions
+- Methodological weaknesses or flaws
+
+Rules:
+- Focus on the DISCUSSION, LIMITATIONS, and CONCLUSION sections.
+- Quote or paraphrase the authors' own words when possible.
+- Each item should be a complete, self-contained sentence.
+- If a category has no explicit mentions, return an empty list.
+- Do NOT invent or assume limitations not present in the text.
+
+Schema:
+{{
+  "limitations": ["..."],
+  "research_gaps": ["..."],
+  "future_work": ["..."],
+  "methodological_weaknesses": ["..."]
+}}""",
+    ),
+    (
+        "human",
+        "Paper title: {title}\nPMID: {pmid}\n\nText to analyze:\n{text}\n\nReturn JSON only.",
     ),
 ])
 
@@ -114,12 +197,21 @@ Schema:
 class LimitationExtractor:
     """
     Extracts limitations, research gaps, and methodological weaknesses
-    from PaperMetadata objects.
+    from PaperMetadata objects using a hybrid approach.
+    
+    Optimization: Text is truncated to ~2000 chars to reduce LLM tokens.
     """
+
+    # Max characters to pass to LLM (roughly 500 words)
+    MAX_LLM_CHARS = 2000
+    
+    # Min characters to consider section as valid
+    MIN_SECTION_CHARS = 50
 
     def __init__(self, model_name: str = "gpt-4o-mini", temperature: float = 0.0) -> None:
         self._llm = ChatOpenAI(model=model_name, temperature=temperature)
-        self._chain = _EXTRACTION_PROMPT | self._llm | JsonOutputParser()
+        self._short_chain = _SHORT_EXTRACT_PROMPT | self._llm | JsonOutputParser()
+        self._long_chain = _LONG_EXTRACT_PROMPT | self._llm | JsonOutputParser()
 
     # ------------------------------------------------------------------ #
     # Public
@@ -128,7 +220,7 @@ class LimitationExtractor:
     def extract(self, paper: PaperMetadata) -> ExtractedLimitations:
         """
         Main entry point: decide which text source to use, extract sections,
-        then call the LLM.
+        then call the LLM with optimized text size.
         """
         base = ExtractedLimitations(
             pmid=paper.pmid,
@@ -140,36 +232,64 @@ class LimitationExtractor:
             pubmed_url=paper.pubmed_url,
         )
 
+        # Determine extraction method and text source
+        extraction_text = ""
+        extraction_method = "none"
+        
         if paper.full_text:
             logger.debug("Using PMC full text for PMID {}", paper.pmid)
-            section_text = self._extract_sections_heuristic(paper.full_text)
-            # Fall back to full text if heuristic found nothing meaningful
-            if len(section_text) < 200:
-                section_text = paper.full_text[:6000]  # cap to save tokens
+            sections = self._extract_sections_heuristic(paper.full_text)
+            
+            if sections and len(sections) >= self.MIN_SECTION_CHARS:
+                # Good sections found - use them
+                extraction_text = sections
+                extraction_method = "full_text_sections"
+            elif paper.abstract:
+                # No good sections - use abstract
+                extraction_text = paper.abstract
+                extraction_method = "abstract"
+            else:
+                # No abstract either - use first part of full text
+                extraction_text = paper.full_text[:3000]
+                extraction_method = "full_text_fallback"
+            
             base.used_full_text = True
-        else:
+        elif paper.abstract:
             logger.debug("Using abstract for PMID {}", paper.pmid)
-            section_text = paper.abstract
+            extraction_text = paper.abstract
+            extraction_method = "abstract"
+        else:
+            logger.warning("No text available for PMID {}", paper.pmid)
+            base.extraction_method = "no_text"
+            return base
+        
+        base.extraction_method = extraction_method
+        base.raw_limitation_text = extraction_text[:500]  # Store first 500 chars for reference
+        
+        # Truncate to max LLM chars
+        if len(extraction_text) > self.MAX_LLM_CHARS:
+            extraction_text = self._smart_truncate(extraction_text)
+        
+        logger.debug("=== EXTRACTION TEXT FOR PMID {} ({} chars, method: {}) ===\n{}",
+                    paper.pmid, len(extraction_text), extraction_method, extraction_text[:500])
 
-        base.raw_limitation_text = section_text
-
-        logger.debug("=== RAW TEXT FOR PMID {} ===\n{}", paper.pmid, section_text[:1000])
-
-        if not section_text.strip():
+        if not extraction_text.strip():
             logger.warning("No text available for PMID {}", paper.pmid)
             return base
 
-        structured = self._llm_extract(paper.title, section_text)
+        structured = self._llm_extract(paper.title, paper.pmid, extraction_text, extraction_method)
 
-        logger.debug("=== LLM EXTRACTED DATA FOR PMID {} ===\n{}", paper.pmid, json.dumps(structured, indent=2))
+        logger.debug("=== LLM EXTRACTED DATA FOR PMID {} ===\n{}",
+                    paper.pmid, json.dumps(structured, indent=2))
         base.limitations = structured.get("limitations", [])
         base.research_gaps = structured.get("research_gaps", [])
         base.future_work = structured.get("future_work", [])
         base.methodological_weaknesses = structured.get("methodological_weaknesses", [])
 
         logger.info(
-            "PMID {} → {} limitations, {} gaps, {} future work items",
+            "PMID {} [{}] → {} limitations, {} gaps, {} future work items",
             paper.pmid,
+            extraction_method,
             len(base.limitations),
             len(base.research_gaps),
             len(base.future_work),
@@ -183,50 +303,166 @@ class LimitationExtractor:
     def _extract_sections_heuristic(self, text: str) -> str:
         """
         Pull named sections (Limitations, Discussion, etc.) from full text
-        using regex. Returns concatenated section content.
+        using regex. Returns concatenated section content, sorted by priority.
         """
-        collected: list[str] = []
+        collected: list[tuple[int, str]] = []  # (priority, text)
 
-        for section_name, pattern in _SECTION_PATTERNS:
+        for priority, section_name, pattern in _SECTION_PATTERNS:
             match = pattern.search(text)
             if not match:
                 continue
             start = match.end()
             # Find where the next major section begins
             end_match = _NEXT_SECTION.search(text, start)
-            end = end_match.start() if end_match else start + 4000
+            end = end_match.start() if end_match else start + 3000
             section_text = text[start:end].strip()
-            if section_text:
-                collected.append(f"[{section_name.upper()}]\n{section_text}")
+            if section_text and len(section_text) >= self.MIN_SECTION_CHARS:
+                collected.append((priority, f"[{section_name.upper()}]\n{section_text}"))
                 logger.debug(
-                    "Heuristic found section '{}' ({} chars)", section_name, len(section_text)
+                    "Found section '{}' (priority={}, {} chars)", section_name, priority, len(section_text)
                 )
 
-        return "\n\n".join(collected)
+        # Sort by priority and concatenate
+        if not collected:
+            return ""
+        
+        # Sort: lower priority number = higher importance
+        collected.sort(key=lambda x: x[0])
+        
+        result = "\n\n".join(text for _, text in collected)
+        logger.debug("Total extracted sections: {} chars", len(result))
+        return result
 
-    def _llm_extract(self, title: str, text: str) -> dict:
+    def _smart_truncate(self, text: str) -> str:
+        """
+        Smart truncation that tries to keep the most relevant parts.
+        Prioritizes Limitations > Discussion > Conclusion sections.
+        """
+        # If text is short enough, return as-is
+        if len(text) <= self.MAX_LLM_CHARS:
+            return text
+        
+        # Try to find a good break point (end of sentence, paragraph)
+        truncated = text[:self.MAX_LLM_CHARS]
+        
+        # Find the last sentence boundary
+        last_period = truncated.rfind('. ')
+        last_newline = truncated.rfind('\n\n')
+        
+        # Use the later of the two as break point
+        break_point = max(last_period, last_newline)
+        
+        if break_point > self.MAX_LLM_CHARS * 0.7:  # Only use if we're at least 70% through
+            truncated = truncated[:break_point + 1]
+        
+        logger.debug("Text truncated from {} to {} chars", len(text), len(truncated))
+        return truncated
+
+    def _llm_extract(self, title: str, pmid: str, text: str, method: str) -> dict:
         """
         Call GPT to extract structured limitations from text.
-        Returns a dict matching _LLMExtractionSchema.
+        Uses short prompt for section-based extraction, long prompt for fallback.
         """
-        # Trim text to ~3500 words to stay within context
-        words = text.split()
-        if len(words) > 3500:
-            text = " ".join(words[:3500])
-            logger.debug("Text trimmed to 3500 words for PMID extraction")
-
         try:
-            result = self._chain.invoke({"title": title, "text": text})
+            # Use appropriate chain based on method
+            if method in ("full_text_sections", "abstract"):
+                result = self._short_chain.invoke({
+                    "title": title,
+                    "pmid": pmid,
+                    "text": text
+                })
+            else:
+                # Full text fallback - use longer prompt
+                # Further truncate to reduce tokens
+                words = text.split()
+                if len(words) > 800:
+                    text = " ".join(words[:800])
+                result = self._long_chain.invoke({
+                    "title": title,
+                    "pmid": pmid,
+                    "text": text
+                })
+            
             # Validate that all expected keys exist
             for key in ("limitations", "research_gaps", "future_work", "methodological_weaknesses"):
                 if key not in result:
                     result[key] = []
             return result
         except Exception as exc:
-            logger.error("LLM extraction failed: {}", exc)
+            logger.error("LLM extraction failed for PMID {}: {}", pmid, exc)
             return {
                 "limitations": [],
                 "research_gaps": [],
                 "future_work": [],
                 "methodological_weaknesses": [],
             }
+
+    # ------------------------------------------------------------------ #
+    # Batch Extraction (for optimized processing)
+    # ------------------------------------------------------------------ #
+    
+    def extract_batch(self, papers: list[PaperMetadata], progress_callback=None) -> list[ExtractedLimitations]:
+        """
+        Extract limitations for a batch of papers.
+        
+        This method processes multiple papers efficiently, using the cache
+        to skip already-processed papers.
+        
+        Args:
+            papers: List of PaperMetadata objects
+            progress_callback: Optional callback(type, data) for progress updates
+            
+        Returns:
+            List of ExtractedLimitations
+        """
+        from src.extractor.extraction_cache import ExtractionCache
+        from config.settings import settings
+        import re
+        
+        def slug(t): return re.sub(r"[^a-z0-9]+", "_", t.lower()).strip("_")
+        
+        # Get topic from first paper or use default
+        topic = slug(papers[0].title[:50]) if papers else "batch"
+        cache_dir = settings.processed_data_dir / topic
+        
+        cache = ExtractionCache(cache_dir)
+        
+        results = []
+        
+        # Get cached and missing PMIDs
+        pmids = [p.pmid for p in papers]
+        cached, missing_pmids = cache.get_all(pmids)
+        
+        results.extend(cached)
+        
+        if progress_callback:
+            progress_callback("status", {
+                "msg": f"Cache: {len(cached)} hits, {len(missing_pmids)} to process"
+            })
+        
+        # Build mapping for missing papers
+        missing_papers = {p.pmid: p for p in papers if p.pmid in missing_pmids}
+        
+        # Process missing papers
+        for i, pmid in enumerate(missing_pmids):
+            paper = missing_papers[pmid]
+            extraction = self.extract(paper)
+            results.append(extraction)
+            
+            # Save to cache
+            cache.set(pmid, extraction)
+            
+            # Progress update
+            if progress_callback and (i + 1) % 10 == 0:
+                percent = int(((i + 1) / len(missing_pmids)) * 100) if missing_pmids else 100
+                progress_callback("progress", {
+                    "percent": percent,
+                    "msg": f"Extracted {i + 1}/{len(missing_pmids)} papers"
+                })
+        
+        if progress_callback:
+            progress_callback("status", {
+                "msg": f"Completed: {len(results)} extractions ({len(cached)} from cache)"
+            })
+        
+        return results
