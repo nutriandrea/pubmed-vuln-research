@@ -29,6 +29,7 @@ from pydantic import BaseModel, Field
 from src.logger import logger
 from src.retriever.models import PaperMetadata
 from src.extractor.models import ExtractedLimitations
+from src.extractor.limitation_classifier import LimitationClassifier
 
 # ------------------------------------------------------------------ #
 # Section header patterns (case-insensitive, comprehensive)
@@ -294,6 +295,21 @@ class LimitationExtractor:
             len(base.research_gaps),
             len(base.future_work),
         )
+
+        # Classification layer: filter and categorize limitations
+        if extraction_text.strip():
+            try:
+                classifier = LimitationClassifier(model_name=self._llm.model_name)
+                classified = classifier.classify(extraction_text)
+                base.classified_limitations = classified.limitations
+                logger.debug(
+                    "Classified {} limitations for PMID {}",
+                    len(classified.limitations),
+                    paper.pmid
+                )
+            except Exception as e:
+                logger.warning(f"Classification failed for PMID {paper.pmid}: {e}")
+
         return base
 
     # ------------------------------------------------------------------ #

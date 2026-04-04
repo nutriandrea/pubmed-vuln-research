@@ -4,7 +4,31 @@ Output models for the extraction step.
 
 from __future__ import annotations
 
+from enum import Enum
+from typing import Optional
+
 from pydantic import BaseModel, Field
+
+
+class LimitationCategory(str, Enum):
+    DATASET = "dataset"
+    METHODOLOGY = "methodology"
+    EVALUATION = "evaluation"
+    BIAS = "bias"
+    OTHER = "other"
+
+
+class Severity(str, Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
+class ClassifiedLimitation(BaseModel):
+    """Singola limitazione classificata"""
+    text: str = Field(description="The limitation text")
+    category: str = Field(description="Category: dataset, methodology, evaluation, bias, other")
+    severity: str = Field(description="Severity: low, medium, high")
 
 
 class ExtractedLimitations(BaseModel):
@@ -40,6 +64,9 @@ class ExtractedLimitations(BaseModel):
     # - "full_text_fallback": Used beginning of full text (no good sections found)
     # - "no_text": No text available for this paper
     extraction_method: str = "unknown"
+
+    # Classification layer output: filtered limitations with category and severity
+    classified_limitations: list[ClassifiedLimitation] = Field(default_factory=list)
 
     @property
     def all_weakness_points(self) -> list[str]:
