@@ -21,7 +21,12 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from src.logger import logger
-from src.rag.prompts import RAG_ANSWER_PROMPT, SYNTHESIS_PROMPT
+from src.rag.prompts import (
+    RAG_ANSWER_PROMPT,
+    SYNTHESIS_PROMPT,
+    RESEARCH_GRADE_PROMPT,
+    INSIGHT_GENERATOR_PROMPT,
+)
 from src.vectorstore.qdrant_store import LimitationVectorStore
 
 
@@ -203,6 +208,96 @@ class LimitationRAGPipeline:
 
         return {"answer": answer, "sources": sources}
 
+    def ask_research_grade(
+        self,
+        question: str,
+        filter_category: Optional[str] = None,
+    ) -> dict:
+        """
+        Answer with research-grade output including confidence levels and evidence.
+        
+        Returns:
+            dict with 'answer', 'sources', 'confidence', 'key_limitations'
+        """
+        logger.info("Research-grade ask: '{}'", question)
+        retrieved = self._store.similarity_search(
+            question,
+            k=self._top_k * 2,  # Get more for better analysis
+            filter_type="limitation",
+            filter_category=filter_category,
+        )
+        if not retrieved:
+            return {
+                "answer": "No relevant limitations found.",
+                "sources": [],
+                "confidence": "LOW",
+                "key_limitations": [],
+            }
+
+        context = _format_docs(retrieved)
+        answer = self._research_grade_chain.invoke(
+            {"context": context, "question": question}
+        )
+
+        sources = []
+        key_limitations = []
+        seen = set()
+        
+        for doc in retrieved:
+            meta = doc.metadata
+            key = (meta.get("pmid"), meta.get("category"))
+            if key not in seen:
+                seen.add(key)
+                sources.append({
+                    "paper_title": meta.get("paper_title"),
+                    "year": meta.get("year"),
+                    "pmid": meta.get("pmid"),
+                    "category": meta.get("category"),
+                    "severity": meta.get("severity"),
+                })
+                
+                if meta.get("severity") == "high":
+                    key_limitations.append({
+                        "text": doc.page_content[:200],
+                        "category": meta.get("category"),
+                        "severity": meta.get("severity"),
+                    })
+
+        # Estimate confidence based on number of sources
+        confidence = "HIGH" if len(sources) > 20 else "MEDIUM" if len(sources) > 5 else "LOW"
+
+        return {
+            "answer": answer,
+            "sources": sources,
+            "confidence": confidence,
+            "key_limitations": key_limitations[:5],
+        }
+
+    def generate_insights(self, n_papers: int = 0) -> str:
+        """
+        Automatically generate top insights without user query.
+        
+        Uses vulnerability data to create structured insights.
+        """
+        logger.info("Generating automatic insights")
+        
+        # Retrieve a broad sample of limitations
+        query = "limitations weaknesses research gaps methodology"
+        retrieved = self._store.similarity_search(query, k=self._top_k * 3)
+        
+        if not retrieved:
+            return "No data available for insights. Run ingestion first."
+
+        context = _format_docs(retrieved)
+        n = n_papers or len({d.metadata.get("pmid") for d in retrieved})
+        
+        response = self._insight_chain.invoke(
+            {"context": context, "n_papers": n}
+        )
+        
+        logger.info("Insights generated ({} chars)", len(response))
+        return response
+
     # ------------------------------------------------------------------ #
     # Private
     # ------------------------------------------------------------------ #
@@ -218,6 +313,18 @@ class LimitationRAGPipeline:
         # Synthesis chain: context + topic + n_papers → full report
         self._synthesis_chain = (
             SYNTHESIS_PROMPT
+            | self._llm
+            | self._str_parser
+        )
+        # Research-grade chain: enhanced answer with confidence + evidence
+        self._research_grade_chain = (
+            RESEARCH_GRADE_PROMPT
+            | self._llm
+            | self._str_parser
+        )
+        # Insight generator chain: automatic insights
+        self._insight_chain = (
+            INSIGHT_GENERATOR_PROMPT
             | self._llm
             | self._str_parser
         )

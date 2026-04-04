@@ -283,6 +283,24 @@ class ResearchLimitationAnalyzer:
         topic = self.topic if self.topic else ""
         return self.rag.synthesize(topic=topic, n_papers=self._n_papers)  # type: ignore
 
+    def ask_research_grade(self, question: str, filter_category: str = None) -> dict:
+        """Ask with research-grade output including confidence and evidence."""
+        self._require_rag()
+        return self.rag.ask_research_grade(question, filter_category=filter_category)  # type: ignore
+
+    def generate_insights(self) -> str:
+        """Automatically generate top insights."""
+        self._require_rag()
+        return self.rag.generate_insights(n_papers=self._n_papers)  # type: ignore
+
+    def get_vulnerabilities(self) -> list:
+        """Get ranked vulnerabilities from the analysis."""
+        return self._vulnerabilities
+
+    def get_clusters(self) -> list:
+        """Get limitation clusters from the analysis."""
+        return self._clusters
+
     # ------------------------------------------------------------------ #
     # Helpers
     # ------------------------------------------------------------------ #

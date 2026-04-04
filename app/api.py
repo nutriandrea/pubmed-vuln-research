@@ -97,6 +97,16 @@ class SynthesizeRequest(BaseModel):
     sid: str
 
 
+class AskResearchGradeRequest(BaseModel):
+    sid: str
+    question: str
+    filter_category: Optional[str] = None
+
+
+class GenerateInsightsRequest(BaseModel):
+    sid: str
+
+
 # ── routes ─────────────────────────────────────────────────────────────────────
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -362,3 +372,56 @@ async def synthesize_pdf(req: SynthesizeRequest):
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+
+@app.post("/api/ask-research-grade")
+async def ask_research_grade(req: AskResearchGradeRequest):
+    """Answer with research-grade output including confidence and evidence."""
+    if req.sid not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    session = _sessions[req.sid]
+    if not session.ingested:
+        raise HTTPException(status_code=400, detail="Run ingestion first")
+
+    def run_ask():
+        try:
+            return session.analyzer.rag.ask_research_grade(
+                req.question,
+                filter_category=req.filter_category,
+            )
+        except Exception as exc:
+            logger.exception(f"Research-grade ask error: {exc}")
+            return {"error": str(exc)}
+
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(None, run_ask)
+
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result
+
+
+@app.post("/api/insights")
+async def generate_insights(req: GenerateInsightsRequest):
+    """Automatically generate top insights without user query."""
+    if req.sid not in _sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    session = _sessions[req.sid]
+    if not session.ingested:
+        raise HTTPException(status_code=400, detail="Run ingestion first")
+
+    def run_insights():
+        try:
+            return session.analyzer.rag.generate_insights(session.n_papers)
+        except Exception as exc:
+            logger.exception(f"Insights generation error: {exc}")
+            return {"error": str(exc)}
+
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(None, run_insights)
+
+    if isinstance(result, dict) and "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return {"insights": result}
