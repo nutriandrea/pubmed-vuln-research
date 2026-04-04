@@ -35,8 +35,11 @@ def _format_docs(docs: list[Document]) -> str:
         meta = doc.metadata
         source = f"[{meta.get('paper_title', 'Unknown')} ({meta.get('year', '?')})] "
         category = meta.get("category", "")
+        severity = meta.get("severity", "")
         if category:
             source += f"[{category}] "
+        if severity:
+            source += f"[{severity}] "
         parts.append(source + doc.page_content)
     return "\n\n---\n\n".join(parts)
 
@@ -71,15 +74,34 @@ class LimitationRAGPipeline:
     # Public
     # ------------------------------------------------------------------ #
 
-    def ask(self, question: str) -> str:
+    def ask(
+        self,
+        question: str,
+        filter_category: Optional[str] = None,
+        filter_type: Optional[str] = "limitation",
+    ) -> str:
         """
         Answer a single question about research limitations.
 
         The question is used both as the retrieval query and as the
         prompt input for the LLM.
+        
+        Parameters
+        ----------
+        question : str
+            The question to answer.
+        filter_category : str | None
+            Filter by category (dataset, methodology, evaluation, bias, etc.).
+        filter_type : str | None
+            Filter by type (default: "limitation").
         """
         logger.info("RAG ask: '{}'", question)
-        retrieved = self._store.similarity_search(question, k=self._top_k)
+        retrieved = self._store.similarity_search(
+            question,
+            k=self._top_k,
+            filter_type=filter_type,
+            filter_category=filter_category,
+        )
         if not retrieved:
             return "No relevant limitations found in the knowledge base for this query."
 
@@ -123,17 +145,36 @@ class LimitationRAGPipeline:
         logger.info("Synthesis report generated ({} chars)", len(response))
         return response
 
-    def ask_with_sources(self, question: str) -> dict:
+    def ask_with_sources(
+        self,
+        question: str,
+        filter_category: Optional[str] = None,
+        filter_type: Optional[str] = "limitation",
+    ) -> dict:
         """
         Like ask(), but also returns the source documents used.
+        
+        Parameters
+        ----------
+        question : str
+            The question to answer.
+        filter_category : str | None
+            Filter by category.
+        filter_type : str | None
+            Filter by type (default: "limitation").
 
         Returns
         -------
         dict with keys:
             - 'answer': str
-            - 'sources': list[dict]  (paper_title, year, pmid, category)
+            - 'sources': list[dict]  (paper_title, year, pmid, category, severity)
         """
-        retrieved = self._store.similarity_search(question, k=self._top_k)
+        retrieved = self._store.similarity_search(
+            question,
+            k=self._top_k,
+            filter_type=filter_type,
+            filter_category=filter_category,
+        )
         if not retrieved:
             return {
                 "answer": "No relevant limitations found.",
@@ -156,6 +197,7 @@ class LimitationRAGPipeline:
                     "pmid": meta.get("pmid"),
                     "journal": meta.get("journal"),
                     "category": meta.get("category"),
+                    "severity": meta.get("severity"),
                     "pubmed_url": meta.get("pubmed_url"),
                 })
 

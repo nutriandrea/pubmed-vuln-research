@@ -4,6 +4,12 @@ Module 3 — Knowledge Processing
 Converts ExtractedLimitations objects into LangChain Documents with rich
 metadata, then chunks them ready for embedding + vector storage.
 
+ENHANCED: Now includes structured metadata from classification layer:
+- type: "limitation" (always)
+- category: dataset, methodology, evaluation, bias, other
+- severity: low, medium, high
+- normalized_text: simplified form for clustering
+
 Public API
 ----------
 DocumentBuilder.build(extracted: list[ExtractedLimitations]) -> list[Document]
@@ -32,6 +38,34 @@ def _clean_text(text: str) -> str:
     text = "\n".join(lines)
     # Normalise whitespace within lines
     text = re.sub(r"[ \t]+", " ", text)
+    return text.strip()
+
+
+def _normalize_limitation(text: str) -> str:
+    """
+    Normalize limitation text for better clustering.
+    Converts to lowercase, removes stop words, standardizes common terms.
+    """
+    text = text.lower().strip()
+    text = re.sub(r'[^\w\s]', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
+    
+    replacements = {
+        r'\bsmall\s+sample\s+size\b': 'small sample',
+        r'\blimited\s+sample\s+size\b': 'small sample',
+        r'\blimited\s+sample\b': 'small sample',
+        r'\bsmall\s+dataset\b': 'small dataset',
+        r'\blimited\s+data\b': 'limited data',
+        r'\blimited\s+cohort\b': 'small sample',
+        r'\blimited\s+number\s+of\s+patients\b': 'small sample',
+        r'\black\s+of\s+': 'lack of ',
+        r'\binsufficient\s+': 'insufficient ',
+        r'\binadequate\s+': 'inadequate ',
+    }
+    
+    for pattern, replacement in replacements.items():
+        text = re.sub(pattern, replacement, text)
+    
     return text.strip()
 
 
@@ -89,6 +123,7 @@ class DocumentBuilder:
             "doi": ex.doi,
             "pubmed_url": ex.pubmed_url,
             "used_full_text": ex.used_full_text,
+            "extraction_method": ex.extraction_method,
         }
 
         documents: list[Document] = []
@@ -110,8 +145,37 @@ class DocumentBuilder:
             for i, chunk in enumerate(chunks):
                 if not chunk.strip():
                     continue
-                meta = {**base_metadata, "category": category, "chunk_index": i}
+                meta = {
+                    **base_metadata,
+                    "type": "limitation",
+                    "category": category,
+                    "source_section": category,
+                    "chunk_index": i,
+                }
                 documents.append(Document(page_content=chunk, metadata=meta))
+
+        # Process classified limitations (from classification layer)
+        if ex.classified_limitations:
+            for classified in ex.classified_limitations:
+                text = classified.text.strip()
+                if not text:
+                    continue
+                
+                # Create document for each classified limitation
+                meta = {
+                    **base_metadata,
+                    "type": "limitation",
+                    "category": classified.category,
+                    "severity": classified.severity,
+                    "normalized_text": _normalize_limitation(classified.text),
+                    "source_section": "classified",
+                    "chunk_index": 0,
+                }
+                documents.append(Document(page_content=text, metadata=meta))
+                logger.debug(
+                    "Added classified limitation for PMID {}: category={}, severity={}",
+                    ex.pmid, classified.category, classified.severity
+                )
 
         # If LLM found nothing but raw text exists, chunk the raw text
         if not documents and ex.raw_limitation_text.strip():
@@ -121,7 +185,7 @@ class DocumentBuilder:
             for i, chunk in enumerate(chunks):
                 if not chunk.strip():
                     continue
-                meta = {**base_metadata, "category": "raw", "chunk_index": i}
+                meta = {**base_metadata, "type": "limitation", "category": "raw", "chunk_index": i}
                 documents.append(Document(page_content=chunk, metadata=meta))
 
         return documents

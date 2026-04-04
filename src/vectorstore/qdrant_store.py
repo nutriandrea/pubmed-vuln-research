@@ -126,7 +126,9 @@ class LimitationVectorStore:
         self,
         query: str,
         k: int = 8,
+        filter_type: Optional[str] = None,
         filter_category: Optional[str] = None,
+        filter_severity: Optional[str] = None,
     ) -> list[Document]:
         """
         Retrieve top-k most similar chunks.
@@ -137,25 +139,48 @@ class LimitationVectorStore:
             Natural language query.
         k : int
             Number of results to return.
+        filter_type : str | None
+            If set, restrict results to a type (e.g., 'limitation').
         filter_category : str | None
             If set, restrict results to a category:
             'limitation', 'research_gap', 'future_work',
-            'methodological_weakness', 'raw'.
+            'methodological_weakness', 'raw', or classification categories
+            'dataset', 'methodology', 'evaluation', 'bias', 'other'.
+        filter_severity : str | None
+            If set, restrict results to severity:
+            'low', 'medium', 'high'.
         """
         search_kwargs: dict = {"k": k}
+        
+        # Build filter conditions
+        filter_conditions = []
+        
+        if filter_type:
+            filter_conditions.append(
+                {"key": "metadata.type", "match": {"value": filter_type}}
+            )
+        
         if filter_category:
-            search_kwargs["filter"] = {
-                "must": [
-                    {"key": "metadata.category", "match": {"value": filter_category}}
-                ]
-            }
+            filter_conditions.append(
+                {"key": "metadata.category", "match": {"value": filter_category}}
+            )
+        
+        if filter_severity:
+            filter_conditions.append(
+                {"key": "metadata.severity", "match": {"value": filter_severity}}
+            )
+        
+        if filter_conditions:
+            search_kwargs["filter"] = {"must": filter_conditions}
 
         results = self._store.similarity_search(query, **search_kwargs)
         logger.debug(
-            "similarity_search '{}' → {} results (filter={})",
+            "similarity_search '{}' → {} results (type={}, category={}, severity={})",
             query[:60],
             len(results),
+            filter_type,
             filter_category,
+            filter_severity,
         )
         return results
 
