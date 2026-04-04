@@ -34,6 +34,7 @@ from src.processor.limitation_clusterer import (
     LimitationClusterer,
     extract_limitations_for_clustering,
 )
+from src.processor.vulnerability_ranker import VulnerabilityRanker
 from src.rag.pipeline import LimitationRAGPipeline
 from src.retriever.pubmed_client import PubMedClient, PubMedQueryParams
 from src.retriever.models import PaperMetadata
@@ -72,6 +73,7 @@ class ResearchLimitationAnalyzer:
         self._n_papers: int = 0
         self._extracted_list: list[ExtractedLimitations] = []
         self._clusters: list = []
+        self._vulnerabilities: list = []
 
     # ------------------------------------------------------------------ #
     # Ingestion pipeline
@@ -187,6 +189,35 @@ class ResearchLimitationAnalyzer:
             except Exception as e:
                 logger.warning(f"Clustering failed: {e}")
                 self._clusters = []
+
+        # ---- Step 2.6: Vulnerability ranking ----
+        logger.info("=== STEP 2.6: Ranking vulnerabilities ===")
+        if self._clusters:
+            try:
+                ranker = VulnerabilityRanker()
+                self._vulnerabilities = ranker.rank(self._clusters)
+                
+                # Save ranking to file
+                ranking_file = processed_dir / "vulnerabilities.json"
+                ranker.save_ranking(self._vulnerabilities, ranking_file)
+                
+                logger.info(
+                    "Ranked {} vulnerabilities",
+                    len(self._vulnerabilities)
+                )
+                
+                # Log top vulnerabilities
+                for i, vuln in enumerate(self._vulnerabilities[:5]):
+                    logger.info(
+                        "  Vulnerability {}: '{}' (freq={}, severity={})",
+                        i + 1,
+                        vuln.limitation[:50],
+                        vuln.frequency,
+                        vuln.severity
+                    )
+            except Exception as e:
+                logger.warning(f"Vulnerability ranking failed: {e}")
+                self._vulnerabilities = []
 
         # ---- Step 3: Build document chunks ----
         logger.info("=== STEP 3: Document chunking ===")
