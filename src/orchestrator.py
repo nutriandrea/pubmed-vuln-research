@@ -30,6 +30,10 @@ from src.extractor.section_extractor import LimitationExtractor
 from src.extractor.models import ExtractedLimitations
 from src.logger import logger
 from src.processor.document_builder import DocumentBuilder
+from src.processor.limitation_clusterer import (
+    LimitationClusterer,
+    extract_limitations_for_clustering,
+)
 from src.rag.pipeline import LimitationRAGPipeline
 from src.retriever.pubmed_client import PubMedClient, PubMedQueryParams
 from src.retriever.models import PaperMetadata
@@ -66,6 +70,8 @@ class ResearchLimitationAnalyzer:
         self._vector_store: Optional[LimitationVectorStore] = None
         self.rag: Optional[LimitationRAGPipeline] = None
         self._n_papers: int = 0
+        self._extracted_list: list[ExtractedLimitations] = []
+        self._clusters: list = []
 
     # ------------------------------------------------------------------ #
     # Ingestion pipeline
@@ -147,6 +153,40 @@ class ResearchLimitationAnalyzer:
         logger.info(
             "Extraction complete: {} papers processed", len(extracted_list)
         )
+
+        # Store extracted list for clustering
+        self._extracted_list = extracted_list
+
+        # ---- Step 2.5: Cluster limitations (semantic deduplication) ----
+        logger.info("=== STEP 2.5: Clustering limitations ===")
+        limitations_for_clustering = extract_limitations_for_clustering(extracted_list)
+        
+        if limitations_for_clustering:
+            try:
+                clusterer = LimitationClusterer(similarity_threshold=0.80)
+                self._clusters = clusterer.cluster(limitations_for_clustering)
+                
+                # Save clusters to file
+                clusters_file = processed_dir / "clusters.json"
+                clusterer.save_clusters(self._clusters, clusters_file)
+                
+                logger.info(
+                    "Created {} limitation clusters from {} items",
+                    len(self._clusters),
+                    len(limitations_for_clustering)
+                )
+                
+                # Log top clusters
+                for i, cluster in enumerate(self._clusters[:5]):
+                    logger.info(
+                        "  Cluster {}: '{}' (freq={})",
+                        i + 1,
+                        cluster.representative[:50],
+                        cluster.frequency
+                    )
+            except Exception as e:
+                logger.warning(f"Clustering failed: {e}")
+                self._clusters = []
 
         # ---- Step 3: Build document chunks ----
         logger.info("=== STEP 3: Document chunking ===")
