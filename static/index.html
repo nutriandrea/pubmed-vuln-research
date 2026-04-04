@@ -320,6 +320,169 @@
             border-radius: 4px;
             margin: 10px 0;
         }
+
+        /* Insights Panel */
+        .insights-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .insights-header h2 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .vulnerabilities-summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .vuln-stat {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .vuln-stat-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .vuln-stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .top-vulnerabilities {
+            margin-bottom: 25px;
+        }
+        .top-vulnerabilities h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+        .vuln-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .vuln-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .vuln-item.high { border-left-color: #e74c3c; }
+        .vuln-item.medium { border-left-color: #f39c12; }
+        .vuln-item.low { border-left-color: #27ae60; }
+
+        .vuln-rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            width: 40px;
+        }
+        .vuln-content {
+            flex: 1;
+        }
+        .vuln-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .vuln-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #777;
+        }
+        .vuln-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .vuln-badge.high { background: #e74c3c; color: white; }
+        .vuln-badge.medium { background: #f39c12; color: white; }
+        .vuln-badge.low { background: #27ae60; color: white; }
+
+        .category-breakdown {
+            margin-bottom: 25px;
+        }
+        .category-breakdown h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .category-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .category-label {
+            width: 120px;
+            font-size: 13px;
+            color: #555;
+        }
+        .category-bar-track {
+            flex: 1;
+            height: 24px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .category-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .category-count {
+            width: 50px;
+            text-align: right;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .ai-insights {
+            margin-bottom: 25px;
+        }
+        .ai-insights h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .ai-insight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border: 1px solid #dde1e7;
+            border-radius: 12px;
+            padding: 20px;
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+        .ai-insight-box h4 {
+            color: #667eea;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+        .empty-state h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -459,6 +622,7 @@
         <div class="main">
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('progress')">📊 Progress</button>
+                <button class="tab" onclick="switchTab('insights')">🔍 Insights</button>
                 <button class="tab" onclick="switchTab('chat')">💬 Ask Questions</button>
                 <button class="tab" onclick="switchTab('report')">📝 Report</button>
             </div>
@@ -478,6 +642,57 @@
 
                 <div class="progress-log" id="progressLog">
                     <div class="log-entry">Ready to search. Enter a topic and click "Search & Ingest".</div>
+                </div>
+            </div>
+
+            <!-- Insights Panel -->
+            <div class="panel" id="panel-insights">
+                <div class="insights-header">
+                    <h2>Research Vulnerabilities</h2>
+                    <button class="btn btn-primary" onclick="loadInsights()" style="width: auto; margin: 0;">
+                        🔄 Refresh Insights
+                    </button>
+                </div>
+                
+                <div id="insightsLoading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing limitations...</p>
+                </div>
+                
+                <div id="insightsContent" style="display: none;">
+                    <div class="vulnerabilities-summary" id="vulnSummary">
+                        <div class="vuln-stat">
+                            <div class="vuln-stat-value" id="totalLimitations">0</div>
+                            <div class="vuln-stat-label">Unique Limitations</div>
+                        </div>
+                        <div class="vuln-stat">
+                            <div class="vuln-stat-value" id="totalMentions">0</div>
+                            <div class="vuln-stat-label">Total Mentions</div>
+                        </div>
+                        <div class="vuln-stat">
+                            <div class="vuln-stat-value" id="papersAnalyzed">0</div>
+                            <div class="vuln-stat-label">Papers Analyzed</div>
+                        </div>
+                    </div>
+                    
+                    <div class="top-vulnerabilities">
+                        <h3>Top Critical Limitations</h3>
+                        <div id="topVulnsList"></div>
+                    </div>
+                    
+                    <div class="category-breakdown">
+                        <h3>Breakdown by Category</h3>
+                        <div id="categoryChart"></div>
+                    </div>
+                    
+                    <div class="ai-insights">
+                        <h3>AI-Generated Insights</h3>
+                        <div id="aiInsightsText" class="ai-insight-box"></div>
+                    </div>
+                </div>
+                
+                <div id="insightsEmpty" class="empty-state">
+                    <p>No insights available yet. Run ingestion first.</p>
                 </div>
             </div>
 
@@ -876,6 +1091,110 @@
                 askQuestion();
             }
         });
+
+        async function loadInsights() {
+            if (!sessionId || !isIngested) {
+                document.getElementById('insightsEmpty').style.display = 'block';
+                document.getElementById('insightsContent').style.display = 'none';
+                return;
+            }
+
+            const loading = document.getElementById('insightsLoading');
+            const content = document.getElementById('insightsContent');
+            const empty = document.getElementById('insightsEmpty');
+
+            loading.style.display = 'block';
+            content.style.display = 'none';
+            empty.style.display = 'none';
+
+            try {
+                // Fetch vulnerabilities data
+                const vulnRes = await fetch(`/api/session/${sessionId}`);
+                const vulnData = await vulnRes.json();
+
+                // Fetch AI-generated insights
+                const insightsRes = await fetch('/api/insights', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sid: sessionId })
+                });
+                const insightsData = await insightsRes.json();
+
+                // Display content
+                loading.style.display = 'none';
+                content.style.display = 'block';
+
+                // Update summary stats
+                document.getElementById('totalLimitations').textContent = vulnData.vulnerabilities?.length || 0;
+                document.getElementById('totalMentions').textContent = vulnData.total_mentions || 0;
+                document.getElementById('papersAnalyzed').textContent = vulnData.n_papers || 0;
+
+                // Render top vulnerabilities
+                const vulnsList = document.getElementById('topVulnsList');
+                const vulns = vulnData.vulnerabilities || [];
+                
+                if (vulns.length === 0) {
+                    vulnsList.innerHTML = '<p style="color: #777;">No vulnerabilities found. Try ingesting more papers.</p>';
+                } else {
+                    vulnsList.innerHTML = vulns.slice(0, 10).map((v, i) => `
+                        <div class="vuln-item ${v.severity || 'medium'}">
+                            <div class="vuln-rank">${i + 1}</div>
+                            <div class="vuln-content">
+                                <div class="vuln-name">${v.limitation}</div>
+                                <div class="vuln-meta">
+                                    <span>📄 ${v.frequency} papers</span>
+                                    <span class="vuln-badge ${v.severity}">${v.severity}</span>
+                                    <span>🏷️ ${v.category}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Render category breakdown
+                const categoryChart = document.getElementById('categoryChart');
+                const byCategory = vulnData.by_category || {};
+                const maxCount = Math.max(...Object.values(byCategory), 1);
+                
+                categoryChart.innerHTML = Object.entries(byCategory)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([cat, count]) => `
+                        <div class="category-bar">
+                            <div class="category-label">${cat}</div>
+                            <div class="category-bar-track">
+                                <div class="category-bar-fill" style="width: ${(count / maxCount) * 100}%"></div>
+                            </div>
+                            <div class="category-count">${count}</div>
+                        </div>
+                    `).join('');
+
+                // Display AI insights
+                const aiInsights = document.getElementById('aiInsightsText');
+                if (insightsData.insights) {
+                    aiInsights.innerHTML = insightsData.insights.replace(/\n/g, '<br>');
+                } else {
+                    aiInsights.innerHTML = '<p style="color: #777;">No insights available yet.</p>';
+                }
+
+            } catch (e) {
+                console.error('Failed to load insights:', e);
+                loading.style.display = 'none';
+                empty.style.display = 'block';
+                empty.innerHTML = '<p style="color: #e74c3c;">Error loading insights: ' + e.message + '</p>';
+            }
+        }
+
+        // Auto-load insights when switching to insights tab
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`panel-${tabName}`).classList.add('active');
+            
+            if (tabName === 'insights' && isIngested) {
+                loadInsights();
+            }
+        }
     </script>
 </body>
 </html>

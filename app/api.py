@@ -119,10 +119,29 @@ async def root():
 
 @app.get("/api/session/{sid}")
 async def session_status(sid: str):
-    """Get session status."""
+    """Get session status with vulnerabilities data."""
     if sid not in _sessions:
         raise HTTPException(status_code=404, detail="Session not found")
     s = _sessions[sid]
+    
+    # Get vulnerabilities data
+    vulnerabilities = []
+    by_category = {}
+    total_mentions = 0
+    
+    if s.analyzer._vulnerabilities:
+        for v in s.analyzer._vulnerabilities:
+            vulnerabilities.append({
+                "limitation": v.limitation,
+                "frequency": v.frequency,
+                "severity": v.severity,
+                "category": v.category,
+                "trend": v.trend,
+                "papers": list(set(v.papers))[:10],
+            })
+            by_category[v.category] = by_category.get(v.category, 0) + v.frequency
+            total_mentions += v.frequency
+    
     return {
         "sid": s.sid,
         "topic": s.topic,
@@ -132,6 +151,9 @@ async def session_status(sid: str):
         "paper_type": s.paper_type,
         "date_from": s.date_from,
         "date_to": s.date_to,
+        "vulnerabilities": vulnerabilities,
+        "by_category": by_category,
+        "total_mentions": total_mentions,
     }
 
 
