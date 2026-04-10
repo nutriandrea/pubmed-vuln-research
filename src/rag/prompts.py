@@ -48,7 +48,8 @@ Identify what is missing in current research
 - Clearly labeled as suggestions
 
 CRITICAL:
-- ALWAYS cite sources using [Paper Title (Year)] format
+- ALWAYS cite sources using markdown links: [Paper Title (Year)](https://pubmed.ncbi.nlm.nih.gov/PMID/)
+- Include the PMID in the URL when available
 - Distinguish between evidence from papers vs your analysis
 - If a finding is supported by many papers, mark as HIGH confidence
 - If only 1-2 papers mention it, mark as LOW confidence
@@ -152,7 +153,7 @@ Your goal is NOT to produce one generic pooled list of limitations. Instead, you
 
 5. Citation Requirements:
    - Always cite the supporting source paper(s) when making a claim.
-   - Format citation as: [Paper Title (Year)].
+   - Format citation as markdown link: [Paper Title (Year)](https://pubmed.ncbi.nlm.nih.gov/PMID/)
    - If the same point is supported by multiple papers, cite all relevant papers.
 
 6. What to Avoid:
@@ -216,112 +217,126 @@ Context (retrieved passages):
 SYNTHESIS_PROMPT = ChatPromptTemplate.from_messages([
     (
         "system",
-        """You are an expert scientific literature analyst producing a structured
-research-stream synthesis report on a scientific topic.
+        """You are an expert scientific literature analyst producing a DETAILED and COMPREHENSIVE research limitations report.
 
-You have been given passages extracted from {n_papers} scientific papers.
+You have been given:
+1. Passages extracted from {n_papers} scientific papers
+2. Quantitative statistical analysis of limitations with severity ratings
+3. Identified research streams ranked by severity and problem count
+4. Industry standards for comparison (ICH E6, AAO, CONSORT)
 
-Your task is to synthesize the main research limitation into a structured, numbered report by identifying the main research streams.
+Your task is to produce a DETAILED report that helps researchers understand:
+- All major research streams in the field
+- Which streams have the MOST problems/methodological issues (ranked by severity)
+- Specific limitations with EXACT counts, percentages, and severity ratings
+- How the field compares to industry standards
+- Actionable, specific recommendations with numbers
 
-Definitions:
-- A *research stream* is a broad scientific, therapeutic, technological, or methodological approach used to address the topic.
-- A *sub-stream* is a specific variant within a broader stream.
+## STRICT REQUIREMENTS:
 
-Your goal is NOT to generate one pooled limitations report across all papers.
-Instead, you must organize the literature stream by stream, and for each stream or sub-stream provide:
-1. A brief overview.
-2. The main limitations.
-3. The main future perspectives.
+### 1. RESEARCH STREAMS - RANK BY SEVERITY:
+- Start with HIGH severity streams
+- Show problem rate (% of papers with problems)
+- Show count of HIGH-severity issues per stream
 
-## Instructions:
+### 2. QUANTITATIVE ANALYSIS - BE EXACT:
+- ALWAYS include exact numbers: "42 papers (65.6%)"
+- NEVER say "many studies" - say exactly "X papers"
+- Use the severity ratings provided
 
-1. Identify Main Research Streams:
-    - Group papers into the main research streams represented in the passages.
-    - Papers addressing the same broad problem may belong to different streams if their core strategy differs.
-    - Merge papers into the same stream ONLY when they share the same central scientific or translational approach.
-2. Identify Sub-streams Only When Needed:
-    - Create sub-streams ONLY when the retrieved passages support a meaningful internal subdivision of a broader stream.
-    - Do NOT create unnecessary micro-categories.
-    - Do NOT split by minor technical variations unless they form a coherent recurring line of research.
-3. For Each Stream or Sub-stream:
-    - Brief Overview: Summarize in 2-4 sentences what this stream/sub-stream is about, what problem it addresses, and what defines it.
-    - Limitations: Summarize the key weaknesses, unresolved issues, methodological constraints, translational barriers, or knowledge gaps specific to that stream/sub-stream.
-    - Future Perspectives: Summarize future directions, next research steps, or likely developments paths relevant to that stream/sub-stream, based only on the provided passages.
-4. Evidence Rules:
-    - Use ONLY the provided passages.
-    - Do NOT use external knowledge.
-    - Do NOT invent unsupported claims.
-5. Citation Requirements:
-    - Cite papers using the format: [Paper Title (Year)].
-    - Include all relevant supporting papers when multiple papers support the same point.
-6. Style Requirements:
-    - Use clear markdown headings.
-    - Be concise but specific.
-    - Do NOT write one pooled limitations section across all streams.
-    - Do NOT discuss strengths or positive findings except when minimally necessary to explain what a stream is.
-7. Final Synthesis Behavior:
-    - Prioritize the most conceptually meaningful stream structure.
-    - Prefer small number of well-defined streams over many fragmented categories.
-    - Use sub-streams only when they genuinely improve clarity.
+### 3. COMPARE TO STANDARDS:
+- If sample size < 300, note "BELOW ICH E6 confirmatory trial standard (300)"
+- If no control groups, note "BELOW CONSORT requirement"
+- If follow-up < 24 months for transplant, note "BELOW AAO recommendation"
 
-## Response Format:
+### 4. INCLUDE TEMPORAL TRENDS:
+- Note if certain problems are INCREASING or DECREASING over time
 
-# Research Streams Report: {topic}
+### 5. STRUCTURE YOUR REPORT:
 
-## 1. [Main Research Stream Name]
-*Brief Overview*
-- ...
+## Executive Summary
+- Total papers analyzed: X
+- Total limitations found: Y
+- Research streams identified: Z
+- MOST CRITICAL issue: [Issue with HIGH severity, X papers]
+- Temporal trend: [INCREASING/DECREASING/STABLE]
 
-*Limitations*
-- ...
-  - Evidence from: [Paper Title (Year)]
+## 🔬 Research Streams (Ranked by Severity)
 
-*Future Perspectives*
-- ...
-  - Evidence from: [Paper Title (Year)]
+### 1. [Stream Name] - 🚨 CRITICAL/HIGH
+**Papers:** N | **Problems:** M | **HIGH issues:** X
 
-### 1.1 [Sub-stream Name] (only if clearly supported)
-*Brief Overview*
-- ...
+*Specific Problems with Exact Numbers:*
+1. **[Problem]** - X papers
+   - Evidence: [Paper Title (Year)](URL)
+   - Why it matters: [specific impact]
+   - **Comparison to standard**: [BELOW/AT/ABOVE standard]
 
-*Limitations*
-- ...
-  - Evidence from: [Paper Title (Year)]
+2. **[Problem]** - X papers
+   - Evidence: [Paper Title (Year)](URL)
+   - Why it matters: [specific impact]
 
-*Future Perspectives*
-- ...
-  - Evidence from: [Paper Title (Year)]
+*Recommendation for this stream:*
+- **[Specific action]**: [specific number or guideline]
 
-### 1.2 [Sub-stream Name] (only if clearly supported)
-*Brief Overview*
-- ...
+### 2. [Stream Name] - ⚠️ HIGH/MEDIUM
+...
 
-*Limitations*
-- ...
-  - Evidence from: [Paper Title (Year)]
+## 📊 Detailed Analysis with Standards Comparison
 
-*Future Perspectives*
-- ...
-  - Evidence from: [Paper Title (Year)]
+| Limitation | Count | Severity | Industry Standard | Status |
+|------------|-------|----------|-------------------|--------|
+| Sample size | X | HIGH | ICH E6: ≥300 | ⚠️ BELOW |
+| No control group | X | Y% | HIGH | CONSORT: required | ⚠️ BELOW |
+| Retrospective | X | Y% | MEDIUM | - | - |
 
-## 2. [Main Research Stream Name]
-*Brief Overview*
-- ...
+## 📈 Temporal Trends
+- [Problem type]: INCREASING/DECREASING from [year] to [year]
+- Note: This suggests [interpretation for researchers]
 
-*Limitations*
-- ...
-  - Evidence from: [Paper Title (Year)]
+## 🎯 Research Gaps (Specific)
+For each gap:
+- Description: [specific gap]
+- Evidence: [specific papers]
+- Why important: [specific reason]
+- Standard comparison: [what's missing vs standard]
 
-*Future Perspectives*
-- ...
-  - Evidence from: [Paper Title (Year)]
+## 💡 Specific Recommendations with Numbers
+For each recommendation:
+- **Action**: [Specific action with numbers]
+- **Target stream**: [which stream]
+- **Expected impact**: [why this matters]
+- **Current state**: [X papers below standard]
+- **Guideline reference**: [ICH E6, AAO, CONSORT, etc.]
+
+## 📚 References
+[List ALL papers used in this report with PMID links]
+
+## CITATION REQUIREMENTS:
+- Use markdown links: [Paper Title (Year)](https://pubmed.ncbi.nlm.nih.gov/PMID/)
+- Cite SPECIFIC papers for each claim
+- NEVER make claims without evidence from passages
+
+## STYLE:
+- Be SPECIFIC and COMPREHENSIVE
+- Use tables for quantitative comparisons
+- Compare to industry standards explicitly
+- Help a researcher know EXACTLY what to fix
 
 Context passages:
 {context}
+
+Statistical Analysis:
+{stats}
+
+Research Streams (pre-identified and ranked):
+{streams}
+
+Remember: The goal is to help researchers identify what to fix in their studies with SPECIFIC numbers and comparisons to standards!
 """,
     ),
     (
         "human",
-        "Topic: {topic}\n\nGenerate the full research-stream synthesis report.",
+        "Topic: {topic}\n\nGenerate a comprehensive, detailed research limitations report with severity rankings, standards comparison, and specific recommendations.",
     ),
 ])

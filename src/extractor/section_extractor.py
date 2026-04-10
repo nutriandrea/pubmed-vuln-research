@@ -133,19 +133,35 @@ _SHORT_EXTRACT_PROMPT = ChatPromptTemplate.from_messages([
 research weaknesses. The text provided is a SELECTED EXCERPT from a paper,
 focused on Discussion/Limitations sections.
 
-Extract ONLY the following from the provided text:
+IMPORTANT: Extract ALL sentences that IMPLICATE a limitation, even if NOT explicitly stated.
+
+Include these patterns (DO NOT require explicit keywords):
+- Sample size: "small cohort", "limited number", "few patients", "relatively small"
+- Design: "retrospective", "single-center", "observational", "single arm"
+- Data: "lack of diversity", "limited dataset", "no validation", "heterogeneous"
+- Follow-up: "short follow-up", "limited duration", "preliminary", "pilot"
+- Methodology: "no control group", "underpowered", "limited statistical power"
+
+Extract limitations even when expressed indirectly like:
+- "This study was conducted on a relatively small cohort"
+- "Only one center participated"
+- "Data were collected retrospectively"
+- "Further studies are needed"
+- "Preliminary findings suggest"
+- "This was a pilot study"
+
+Extract from the provided text:
 - Explicit limitations of the study
 - Research gaps identified by the authors
 - Suggested future work or research directions
 - Methodological weaknesses or flaws
 
 Rules:
-- Focus on EXPLICIT statements about limitations, weaknesses, or gaps.
+- Be INCLUSIVE. Better to over-extract than miss relevant limitations.
+- Extract implicit limitations that are clearly stated even without keywords.
 - Quote or paraphrase the authors' own words when possible.
 - Each item should be a complete, self-contained sentence.
 - If a category has no explicit mentions, return an empty list.
-- Do NOT invent or assume limitations not present in the text.
-- Do NOT summarize the paper's contributions or strengths.
 
 Schema:
 {{
@@ -166,19 +182,37 @@ _LONG_EXTRACT_PROMPT = ChatPromptTemplate.from_messages([
     (
         "system",
         """You are a scientific literature analyst specializing in identifying
-research weaknesses. Your task is to extract ONLY the following from the
-provided paper text:
+research weaknesses. Your task is to extract from the provided paper text:
+
+IMPORTANT: Extract ALL sentences that IMPLICATE a limitation, even if NOT explicitly stated.
+
+Include these patterns (DO NOT require explicit keywords):
+- Sample size: "small cohort", "limited number", "few patients", "relatively small"
+- Design: "retrospective", "single-center", "observational", "single arm"
+- Data: "lack of diversity", "limited dataset", "no validation", "heterogeneous"
+- Follow-up: "short follow-up", "limited duration", "preliminary", "pilot"
+- Methodology: "no control group", "underpowered", "limited statistical power"
+
+Extract limitations even when expressed indirectly like:
+- "This study was conducted on a relatively small cohort"
+- "Only one center participated"
+- "Data were collected retrospectively"
+- "Further studies are needed"
+- "Preliminary findings suggest"
+- "This was a pilot study"
+
+Extract from the provided text:
 - Explicit limitations of the study
 - Research gaps identified by the authors
 - Suggested future work or research directions
 - Methodological weaknesses or flaws
 
 Rules:
+- Be INCLUSIVE. Better to over-extract than miss relevant limitations.
 - Focus on the DISCUSSION, LIMITATIONS, and CONCLUSION sections.
 - Quote or paraphrase the authors' own words when possible.
 - Each item should be a complete, self-contained sentence.
 - If a category has no explicit mentions, return an empty list.
-- Do NOT invent or assume limitations not present in the text.
 
 Schema:
 {{
@@ -598,11 +632,30 @@ Extract limitations, gaps, future work, and weaknesses from this paper.""")
         # Create a simple extraction prompt
         batch_prompt = f"""You are analyzing {len(batch_data)} scientific papers to extract research limitations.
 
+IMPORTANT: Extract ALL sentences that IMPLICATE a limitation, even if NOT explicitly stated.
+
+Include these patterns (DO NOT require explicit keywords):
+- Sample size: "small cohort", "limited number", "few patients", "relatively small"
+- Design: "retrospective", "single-center", "observational", "single arm"
+- Data: "lack of diversity", "limited dataset", "no validation", "heterogeneous"
+- Follow-up: "short follow-up", "limited duration", "preliminary", "pilot"
+- Methodology: "no control group", "underpowered", "limited statistical power"
+
+Extract limitations even when expressed indirectly like:
+- "This study was conducted on a relatively small cohort"
+- "Only one center participated"
+- "Data were collected retrospectively"
+- "Further studies are needed"
+- "Preliminary findings suggest"
+- "This was a pilot study"
+
 For each paper below, extract:
-- limitations: Explicit study limitations
+- limitations: Study limitations (explicit AND implicit)
 - research_gaps: Gaps in the research identified by authors
 - future_work: Suggested future research directions
-- methodological_weaknesses: Methodological flaws
+- methodological_weaknesses: Methodological flaws (explicit AND implicit)
+
+Be INCLUSIVE. Better to over-extract than miss relevant limitations.
 
 Papers:
 {combined_prompt}

@@ -252,6 +252,45 @@ async def ingest(req: IngestRequest):
             extracted_list = extractor.extract_batch(papers, progress_callback=progress_callback)
 
             logger.info("Building documents")
+
+            # Step 2.5: Clustering limitazioni (semantic deduplication)
+            from src.processor.limitation_clusterer import (
+                LimitationClusterer,
+                extract_limitations_for_clustering,
+            )
+            limitations_for_clustering = extract_limitations_for_clustering(extracted_list)
+
+            logger.info(f"Found {len(limitations_for_clustering)} limitations for clustering")
+            if limitations_for_clustering:
+                logger.info(f"Sample: {limitations_for_clustering[0]}")
+
+            if limitations_for_clustering:
+                try:
+                    clusterer = LimitationClusterer(similarity_threshold=0.80)
+                    clusters = clusterer.cluster(limitations_for_clustering)
+                    logger.info(f"Created {len(clusters)} limitation clusters")
+
+                    # Step 2.6: Vulnerability ranking
+                    from src.processor.vulnerability_ranker import VulnerabilityRanker
+                    ranker = VulnerabilityRanker()
+                    vulnerabilities = ranker.rank(clusters)
+                    logger.info(f"Ranked {len(vulnerabilities)} vulnerabilities")
+
+                    # Salva nell'analyzer
+                    session.analyzer._vulnerabilities = vulnerabilities
+                    session.analyzer._clusters = clusters
+                    
+                    # KPI tracking
+                    n_with_limitations = sum(
+                        1 for e in extracted_list 
+                        if e.limitations or e.classified_limitations or e.research_gaps
+                    )
+                    pct = n_with_limitations / len(extracted_list) * 100 if extracted_list else 0
+                    logger.info(f"Extraction KPI: {n_with_limitations}/{len(extracted_list)} papers "
+                                f"have limitations extracted ({pct:.1f}%)")
+                except Exception as e:
+                    logger.warning(f"Clustering/ranking failed: {e}")
+
             builder = DocumentBuilder(
                 chunk_size=settings.chunk_size,
                 chunk_overlap=settings.chunk_overlap,
